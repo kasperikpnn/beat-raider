@@ -13,8 +13,9 @@ The user can:
 - search for songs containing a specific name or genre, songs that were uploaded today/this week/...
 
 The songs:
+- have an audio file connected to them (which format? yet to be determined, probably depends on the libraries used)
 - have a title, and an artist/multiple artists
 - have an upload date/time
 - have a genre set by the uploader
 - have a play count determined by how many times another user has pressed play on the song
-
+- could possibly have cover art?
