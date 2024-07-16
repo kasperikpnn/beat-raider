@@ -1,4 +1,4 @@
-# beat-raider
+# BeatRaider
 
 BeatRaider is an audio uploading and streaming service, most similar to SoundCloud.
 
