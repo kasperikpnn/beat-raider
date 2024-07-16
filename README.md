@@ -9,7 +9,7 @@ The user can:
 - have a profile page that displays their music (with possibly a basic description set by the user)
 - listen to other people's music and receive "medals" on their profile page (ex. "Biggest Rock Listener of the Day", "Most Listens on "Lady Gaga - Poker Face" This Month")
 - increase the play count of other people's songs (not their own) by listening
-- (maybe leave comments and have a basic follow/unfollow system, or reposts: that will be determined later)
+- (maybe comments on songs and a basic follow/unfollow system could be implemented, or reposting other people's songs on your profile page: that will be determined later)
 - search for songs containing a specific name or genre, songs that were uploaded today/this week/...
 
 The songs:
