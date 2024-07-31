@@ -1,8 +1,10 @@
 <h2>Etusivu</h2>
 
 {% if session.user_name %}
-<p>Olet kirjautunut nimellä {{ session.user_name }}</p>
-<a href="/logout">Kirjaudu ulos</a>
+<p>You've logged in as {{ session.user_name }}</p>
+
+<a href="/upload">Upload a song</a>
+<a href="/logout">Log out</a>
 {% else %}
 <form action="/login" method="POST">
 <p>Tunnus:<br>
