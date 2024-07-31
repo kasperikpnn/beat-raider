@@ -1,0 +1,10 @@
+<h2>Listening</h2>
+
+<p>{{ song_name }}</p>
+<p>By: {{ song_artist }}</p>
+<p>Genre: {{ song_genre }}</p>
+<p>Uploaded: TODO</p>
+<audio controls autoplay>
+    <source src="{{ url_for('send_upload', filename=song) }}" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>

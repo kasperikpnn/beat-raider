@@ -1,0 +1,17 @@
+<h1> {{ p_username }}</h1>
+
+<p>User description:</p>
+<p>TODO</p>
+
+<h2>Songs:</h2>
+{% for song in user_songs %}
+<a href="/listen/{{ song[4] }}">{{ song[1] }}</a>
+<audio controls autoplay>
+    <source src="{{ url_for('send_upload', filename=song[4]) }}" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<p>Genre: {{ song[2] }}</p>
+<p>Uploaded: TODO</p>
+
+{% endfor %}
+

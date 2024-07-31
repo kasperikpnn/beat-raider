@@ -21,19 +21,15 @@ class SongManager:
         return True
 
     def getinfo(self, song_id):
-        sql = text("SELECT user_id, name, genre, timestamp FROM songs WHERE id = :song_id")
+        sql = text("SELECT id, user_id, name, genre, timestamp FROM songs WHERE id = :song_id")
         result = db.session.execute(sql, {"song_id":song_id})
         song = result.fetchone()
         if not song:
             print("No song found")
-            return False
+            return -1
         print(song)
-        session["song_artist"] = users.whois(song[0])
-        session["song_name"] = song[1]
-        session["song_genre"] = song[2]
-        session["song_time"] = song[3]
         print("Song found")
-        return True
+        return [users.whois(song[1]), song[2], song[3], song[4], song[0]]
 
     def delete_song(self, filename):
         file_path = os.path.join(self.upload_folder, filename)
@@ -47,5 +43,12 @@ class SongManager:
             return self.save_song(new_file)
         return None
 
-    def get_all_songs(self):
-        return os.listdir(self.upload_folder)
+    def get_songs(self, user_id):
+        sql = text("SELECT id FROM songs WHERE user_id = :user_id")
+        result = db.session.execute(sql, {"user_id":user_id})
+        songs = []
+        if result:
+            for song in result:
+                songs.append(SongManager.getinfo(self, song.id))
+        print(songs)
+        return songs

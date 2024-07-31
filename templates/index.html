@@ -5,6 +5,7 @@
 
 <a href="/upload">Upload a song</a>
 <a href="/logout">Log out</a>
+<a href="/profile/{{ session.user_id }}">Your profile page</a>
 {% else %}
 <form action="/login" method="POST">
 <p>Tunnus:<br>

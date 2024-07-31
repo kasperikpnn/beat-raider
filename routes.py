@@ -11,13 +11,14 @@ from datetime import datetime
 
 @app.route('/uploads/<path:filename>')
 def send_upload(filename):
+    filename = f"{filename}.mp3"
     return send_from_directory('uploads', filename)
 
 @app.route("/listen/<song_id>")
 def listen(song_id):
-    if SM.getinfo(song_id):
-        song = f"{song_id}.mp3"
-        return render_template("song.html", song = song)
+    song_info = SM.getinfo(song_id)
+    if song_info != -1:
+        return render_template("song.html", song = song, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2])
     else:
         return render_template("error.html", message="Oops no song")
 
@@ -37,6 +38,13 @@ def login():
 def logout():
     del session["user_name"]
     return redirect("/")
+
+@app.route("/profile/<user_id>", methods=["get"])
+def profile(user_id):
+    p_username = users.whois(user_id)
+    user_songs = SM.get_songs(user_id)
+    return render_template("profile.html", p_username = p_username, user_songs = user_songs)
+
 
 @app.route("/register", methods=["get", "post"])
 def register():
@@ -79,3 +87,4 @@ def submit():
         return render_template("success.html")
     else:
         return render_template("error.html", message="An oopsie woopsie happened with saving the song")
+
