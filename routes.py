@@ -1,5 +1,5 @@
 from app import app, SM
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, send_from_directory, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import os
@@ -8,6 +8,18 @@ from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
 
+
+@app.route('/uploads/<path:filename>')
+def send_upload(filename):
+    return send_from_directory('uploads', filename)
+
+@app.route("/listen/<song_id>")
+def listen(song_id):
+    if SM.getinfo(song_id):
+        song = f"{song_id}.mp3"
+        return render_template("song.html", song = song)
+    else:
+        return render_template("error.html", message="Oops no song")
 
 @app.route("/")
 def index():

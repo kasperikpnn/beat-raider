@@ -1,8 +1,9 @@
 import os
-from werkzeug.utils import secure_filename
 from sqlalchemy import text
 from flask import abort, request, session
+from db import db
 import idgen
+import users
 
 class SongManager:
     def __init__(self, upload_folder):
@@ -10,7 +11,6 @@ class SongManager:
         os.makedirs(upload_folder, exist_ok=True)
 
     def save_song(self, song_file, name, genre, timestamp):
-        from db import db
         id = idgen.generate_id()
         filename = f"{id}.mp3"
         file_path = os.path.join(self.upload_folder, filename)
@@ -18,6 +18,21 @@ class SongManager:
         sql = text("INSERT INTO songs (id, user_id, name, genre, timestamp) VALUES (:id, :user_id, :name, :genre, :timestamp)")
         db.session.execute(sql, {"id":id, "user_id":session["user_id"], "name":name, "genre":genre, "timestamp":timestamp})
         db.session.commit()
+        return True
+
+    def getinfo(self, song_id):
+        sql = text("SELECT user_id, name, genre, timestamp FROM songs WHERE id = :song_id")
+        result = db.session.execute(sql, {"song_id":song_id})
+        song = result.fetchone()
+        if not song:
+            print("No song found")
+            return False
+        print(song)
+        session["song_artist"] = users.whois(song[0])
+        session["song_name"] = song[1]
+        session["song_genre"] = song[2]
+        session["song_time"] = song[3]
+        print("Song found")
         return True
 
     def delete_song(self, filename):
