@@ -23,14 +23,16 @@ class SongManager:
         os.remove(temp_path)
         return duration
 
-    def save_song(self, song_data, name, genre, duration, timestamp):
+    def save_song(self, user_id, song_data, name, genre, duration, timestamp):
         id = idgen.generate_id()
         filename = f"{id}.mp3"
         file_path = os.path.join(self.upload_folder, filename)
+        if isinstance(song_data, str):
+            song_data = song_data.encode()
         with open(file_path, 'wb') as f:
             f.write(song_data)
         sql = text("INSERT INTO songs (id, user_id, name, genre, duration, timestamp) VALUES (:id, :user_id, :name, :genre, :duration, :timestamp)")
-        db.session.execute(sql, {"id":id, "user_id":session["user_id"], "name":name, "genre":genre, "duration":duration, "timestamp":timestamp})
+        db.session.execute(sql, {"id":id, "user_id":user_id, "name":name, "genre":genre, "duration":duration, "timestamp":timestamp})
         db.session.commit()
         return True
 

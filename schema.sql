@@ -2,7 +2,8 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT,
     artist_name TEXT,
-    password TEXT
+    password TEXT,
+    is_admin BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE songs (

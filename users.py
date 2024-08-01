@@ -1,8 +1,9 @@
 import os
 from db import db
 from flask import abort, request, session
-from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import text
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 def login(name, password):
     sql = text("SELECT password, id FROM users WHERE name=:name AND password=:password")
@@ -18,6 +19,15 @@ def login(name, password):
 def register(name, artist_name, password):
     try:
         sql = text("INSERT INTO users (name, artist_name, password) VALUES (:name, :artist_name, :password)")
+        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
+        db.session.commit()
+    except:
+        return False
+    return True
+
+def register_admin(name, artist_name, password):
+    try:
+        sql = text("INSERT INTO users (name, artist_name, password, is_admin) VALUES (:name, :artist_name, :password, TRUE)")
         db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
         db.session.commit()
     except:

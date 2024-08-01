@@ -86,7 +86,7 @@ def submit():
     if genre == "Custom":
         genre = request.form['custom_genre']
     timestamp = datetime.now()
-    if SM.save_song(song_data, name, genre, duration, timestamp):
+    if SM.save_song(session["user-id"], song_data, name, genre, duration, timestamp):
         return render_template("success.html")
     else:
         return render_template("error.html", message="An oopsie woopsie happened with saving the song")
