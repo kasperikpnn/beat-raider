@@ -41,9 +41,9 @@ def logout():
 
 @app.route("/profile/<user_id>", methods=["get"])
 def profile(user_id):
-    p_username = users.whois(user_id)
+    p_artistname = users.artist(user_id)
     user_songs = SM.get_songs(user_id)
-    return render_template("profile.html", p_username = p_username, user_songs = user_songs)
+    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, p_id = user_id)
 
 
 @app.route("/register", methods=["get", "post"])
@@ -54,20 +54,22 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         if len(username) < 1 or len(username) > 20:
-            return render_template("error.html", message="Tunnuksessa tulee olla 1-20 merkkiä")
+            return render_template("error.html", message="Username too short or long! (1-20 characters)")
 
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         if password1 != password2:
-            return render_template("error.html", message="Salasanat eroavat")
+            return render_template("error.html", message="The passwords aren't matching!")
         if password1 == "":
-            return render_template("error.html", message="Salasana on tyhjä")
+            return render_template("error.html", message="The password is empty!")
 
-        role = request.form["role"]
-        if role not in ("1", "2"):
-            return render_template("error.html", message="Tuntematon käyttäjärooli")
+        artist_name = request.form["artist_name"]
+        if len(artist_name) > 100:
+            return render_template("error.html", message="Artist name too long! (max 100 characters)")
+        elif len(artist_name) == 0:
+            artist_name = username
 
-        if not users.register(username, password1, role):
+        if users.register(username, artist_name, password1) == False:
             return render_template("error.html", message="Rekisteröinti ei onnistunut")
         return redirect("/")
 

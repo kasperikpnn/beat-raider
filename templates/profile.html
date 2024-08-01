@@ -1,4 +1,7 @@
-<h1> {{ p_username }}</h1>
+<h1> {{ p_artistname }}</h1>
+
+{% if session.user_id == p_id}
+<a href="/edit">Edit your profile page here</a>
 
 <p>User description:</p>
 <p>TODO</p>

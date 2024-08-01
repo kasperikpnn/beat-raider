@@ -29,7 +29,7 @@ class SongManager:
             return -1
         print(song)
         print("Song found")
-        return [users.whois(song[1]), song[2], song[3], song[4], song[0]]
+        return [users.artist(song[1]), song[2], song[3], song[4], song[0]]
 
     def delete_song(self, filename):
         file_path = os.path.join(self.upload_folder, filename)

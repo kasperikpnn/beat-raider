@@ -15,9 +15,29 @@ def login(name, password):
     session["csrf_token"] = os.urandom(16).hex()
     return True
 
+def register(name, artist_name, password):
+    from db import db
+    try:
+        sql = text("INSERT INTO users (name, artist_name, password) VALUES (:name, :artist_name, :password)")
+        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
+        db.session.commit()
+    except:
+        return False
+    return True
+
 def whois(id):
     from db import db
     sql = text("SELECT name FROM users WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if not user:
+        return "Error"
+    else:
+        return user[0]
+
+def artist(id):
+    from db import db
+    sql = text("SELECT artist_name FROM users WHERE id=:id")
     result = db.session.execute(sql, {"id":id})
     user = result.fetchone()
     if not user:
