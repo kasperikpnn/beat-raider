@@ -1,20 +1,27 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song_artist}} - {{ song_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
+    <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+</head>
+
 <h1> {{ p_artistname }}</h1>
 
-{% if session.user_id == p_id}
+{% if session.user_id == p_id %}
 <a href="/edit">Edit your profile page here</a>
-
+{% endif %}
 <p>User description:</p>
 <p>TODO</p>
 
 <h2>Songs:</h2>
 {% for song in user_songs %}
-<a href="/listen/{{ song[4] }}">{{ song[1] }}</a>
-<audio controls autoplay>
-    <source src="{{ url_for('send_upload', filename=song[4]) }}" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
-<p>Genre: {{ song[2] }}</p>
-<p>Uploaded: TODO</p>
-
+    {% set song_id = song[7] %}
+    {% set song_name = song[1] %}
+    {% set song_artist = song[0] %}
+    {% set song_genre = song[2] %}
+    
+    {% include 'song_card.html' %}
 {% endfor %}
 
+<!--artist name, song name, genre, duration, likes, playcount, timestamp, song ID -->

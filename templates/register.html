@@ -1,0 +1,18 @@
+<h2>Register</h2>
+
+<form action="/register" method="post">
+    Username: (1-20 characters) <br><input type="text" name="username" required minlength="1" maxlength="20">
+    <p>
+    Artist name: (1-100 characters) <br><input type="text" name="artist_name" minlength="1" maxlength="100">
+    (if left empty, will be the same as your username)
+    <p>
+    Password: <br><input type="password" name="password1" required>
+    <p>
+    Password again: <br><input type="password" name="password2" required>
+    <p>
+    <input type="submit" value="Create account">
+    </form>
+    
+    <p>
+    <a href="/">Palaa takaisin</a>
+    

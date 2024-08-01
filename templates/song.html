@@ -1,10 +1,17 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song_artist}} - {{ song_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
+    <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+</head>
 <h2>Listening</h2>
+<body>
+    {% set song_id = song %}
+    {% set song_name = song_name %}
+    {% set song_artist = song_artist %}
+    {% set song_genre = song_genre %}
+    
+    {% include 'song_card.html' %}
+</body>
 
-<p>{{ song_name }}</p>
-<p>By: {{ song_artist }}</p>
-<p>Genre: {{ song_genre }}</p>
-<p>Uploaded: TODO</p>
-<audio controls autoplay>
-    <source src="{{ url_for('send_upload', filename=song) }}" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>

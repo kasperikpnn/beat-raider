@@ -8,7 +8,6 @@ from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
 
-
 @app.route('/uploads/<path:filename>')
 def send_upload(filename):
     filename = f"{filename}.mp3"
@@ -18,7 +17,7 @@ def send_upload(filename):
 def listen(song_id):
     song_info = SM.getinfo(song_id)
     if song_info != -1:
-        return render_template("song.html", song = song, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2])
+        return render_template("song.html", song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3])
     else:
         return render_template("error.html", message="Oops no song")
 
@@ -80,13 +79,14 @@ def upload():
 @app.route("/submit", methods=["POST"])
 def submit():
     song = request.files['song']
+    song_data = song.read()  # Read the song data into memory
     name = request.form['song_name']
     genre = request.form['genre']
+    duration = SM.calcduration(song_data)
     if genre == "Custom":
         genre = request.form['custom_genre']
     timestamp = datetime.now()
-    if SM.save_song(song, name, genre, timestamp):
+    if SM.save_song(song_data, name, genre, duration, timestamp):
         return render_template("success.html")
     else:
         return render_template("error.html", message="An oopsie woopsie happened with saving the song")
-
