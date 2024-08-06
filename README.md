@@ -7,7 +7,7 @@ BeatRaider is an audio uploading and streaming service, most similar to SoundClo
 - clone this repository
 - create a file called `.env` in the root of the folder, containing these lines:
 ```
-DATABASE_URL=postgresql://devuser:devpass4@localhost:5432/mydatabase
+DATABASE_URL=postgresql://devuser:devpass4@localhost:5432/shared_db
 SECRET_KEY=95d3763bb55e744e77dd181a47b4e1c6
 ```
 - activate the virtual environment and install the required libraries with the commands:
