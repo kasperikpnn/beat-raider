@@ -1,4 +1,5 @@
 .env
+venv
 sovellus
 __pycache__
 uploads

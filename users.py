@@ -35,7 +35,7 @@ def register_admin(name, artist_name, password):
     return True
 
 def whois(id):
-    sql = text("SELECT name FROM users WHERE id=:id")
+    sql = text("SELECT artist_name FROM users WHERE id=:id")
     result = db.session.execute(sql, {"id":id})
     user = result.fetchone()
     if not user:

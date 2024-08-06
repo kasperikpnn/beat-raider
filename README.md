@@ -16,10 +16,18 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r ./requirements.txt
 ```
-- now set the schema of the database with the commands:
+- enter these commands to establish the user and database:
 ```
-psql < schema.sql
+sudo -i -u postgres psql -c "CREATE USER devuser WITH PASSWORD 'devpass';"
+sudo -i -u postgres psql -c "CREATE DATABASE shared_db OWNER devuser;"
+sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE shared_db TO devuser;"
 ```
+- now set the schema of the database with the command:
+```
+psql -U devuser -d shared_db -f schema.sql
+```
+- password is `devpass`
+- (you might have to set the authentication from peer -> md5 from pg_hba.conf if this doesn't work. not sure if this happens on Linux, I'm using WSL on Windows)
 - and finally, boot the app with the command
 ```
 flask run
