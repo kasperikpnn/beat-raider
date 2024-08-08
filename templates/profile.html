@@ -4,15 +4,17 @@
     <title>{{ song_artist}} - {{ song_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+    <script src="{{ url_for('static', filename='js/load_more_songs.js') }}" defer></script>
 </head>
-
+<body>
 <h1> {{ p_artistname }}</h1>
 
 {% if session.user_id == p_id %}
-<a href="/edit">Edit your profile page here</a>
+<a href="/edit_profile/{{ session.user_id }}">Edit your profile page here</a>
 {% endif %}
 <p>User description:</p>
-<p>TODO</p>
+<p>{{ p_desc }}</p>
 
 <h2>Songs:</h2>
 {% for song in user_songs %}
@@ -20,8 +22,21 @@
     {% set song_name = song[1] %}
     {% set song_artist = song[0] %}
     {% set song_genre = song[2] %}
+    {% set song_timestamp = song[6] %}
     
     {% include 'song_card.html' %}
 {% endfor %}
+<script>
+    // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
+    // Select all elements with the id 'timeago'
+    const elements = document.querySelectorAll('#timeago');
 
+    elements.forEach(el => {
+        // Get the datetime from the element
+        const datetime = el.getAttribute('datetime');
+        const timeAgoText = timeago.format(datetime);
+        el.textContent = timeAgoText;
+    });
+</script>
+</body>
 <!--artist name, song name, genre, duration, likes, playcount, timestamp, song ID -->

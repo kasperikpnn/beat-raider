@@ -4,6 +4,7 @@
     <title>{{ song_artist}} - {{ song_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
 </head>
 <h2>Listening</h2>
 <body>
@@ -11,7 +12,20 @@
     {% set song_name = song_name %}
     {% set song_artist = song_artist %}
     {% set song_genre = song_genre %}
+    {% set song_timestamp = song_timestamp %}
     
     {% include 'song_card.html' %}
+    <script>
+        // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
+        // Select all elements with the id 'timeago'
+        const elements = document.querySelectorAll('#timeago');
+
+        elements.forEach(el => {
+            // Get the datetime from the element
+            const datetime = el.getAttribute('datetime');
+            const timeAgoText = timeago.format(datetime);
+            el.textContent = timeAgoText;
+        });
+    </script>
 </body>
 

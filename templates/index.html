@@ -1,4 +1,14 @@
-<h2>Etusivu</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song_artist}} - {{ song_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
+    <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+    <script src="{{ url_for('static', filename='js/song_loader.js') }}" defer></script>
+</head>
+<body>
+<h2>Front page</h2>
 
 {% if session.user_name %}
 <p>You've logged in as {{ session.user_name }}</p>
@@ -16,3 +26,44 @@
 </form>
 {% endif %}
 You can register <a href="/register">here!!</a>
+
+<h3>Recent songs</h3>
+
+<div id="songs-container">
+    {% for song in recent_songs %}
+        {% set song_id = song[7] %}
+        {% set song_name = song[1] %}
+        {% set song_artist = song[0] %}
+        {% set song_genre = song[2] %}
+        {% set song_timestamp = song[6] %}
+        
+        {% include 'song_card.html' %}
+    {% endfor %}
+</div>
+{% if no_more_songs %}
+    <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
+{% endif %}
+
+<form id="back-form" method="post" action="/load_more_songs">
+    <input type="hidden" name="offset" value="{% if offset - (2 * 5) < 0 %}0{% else %}{{ offset - (2 * 5) }}{% endif %}">
+    <input type="hidden" name="direction" value="back">
+    <button type="submit" {% if offset == 0 %}disabled{% endif %}>Back</button>
+</form>
+
+<form id="load-more-form" method="post" action="/load_more_songs">
+    <input type="hidden" name="offset" value="{{ offset }}">
+    <button type="submit" {% if total_songs <= recent_songs|length %}disabled{% endif %}>Load More Songs</button>
+</form>
+<script>
+    // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
+    // Select all elements with the id 'timeago'
+    const elements = document.querySelectorAll('#timeago');
+
+    elements.forEach(el => {
+        // Get the datetime from the element
+        const datetime = el.getAttribute('datetime');
+        const timeAgoText = timeago.format(datetime);
+        el.textContent = timeAgoText;
+    });
+</script>
+</body>

@@ -2,18 +2,16 @@
     <p><a href="/listen/{{ song_id }}">{{ song_name }}</a></p>
     <p>By: {{ song_artist }}</p>
     <p>Genre: {{ song_genre }}</p>
-    <p id="duration-display-{{ song_id }}">Duration: 0:00</p>
-    <p>Uploaded: TODO</p>
+    <p id="duration-display-{{ song_id }}">Duration: <span class="duration">{{ song_duration }}</span></p>
+    <p>Uploaded: <time id="timeago" datetime="{{ song_timestamp }}">{{ song_timestamp }}</time></p>
 
     <audio id="audio-{{ song_id }}" data-index="{{ song_id }}" ontimeupdate="updateSeekBar(this)">
         <source src="{{ url_for('send_upload', filename=song_id) }}" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
-
     <a href="javascript:;" onclick="playMusic('{{ song_id }}')">Play/Pause</a>
-
     <div class="seek-bar" id="seek-bar-{{ song_id }}" onclick="handleSeekClick(event, '{{ song_id }}')">
-        [···················] <!-- Initial seek bar -->
+        [···················]
     </div>
     <p id="time-display-{{ song_id }}">[ 0:00 - 0:00 ]</p>
 </div>

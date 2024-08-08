@@ -1,0 +1,22 @@
+<h2>Edit your profile</h2>
+
+You can leave any fields empty, if you don't wish to edit them.
+
+<form action="/edit_profile/{{ session.user_id }}" method="post">
+Current artist name: {{ p_artistname }}
+New artist name: <br><input type="text" name="artist_name">
+<p>
+Current description: {{ p_desc }}
+New description: <br><input type="text" name="desc">
+<p>
+
+If you wish to change your password, fill out all of the fields below:
+
+Current password: <br><input type="password" name="old_password">
+<p>
+New password: <br><input type="password" name="new_password">
+<p>
+New password again: <br><input type="password" name="new_password2">
+<p>
+<input type="submit" value="Edit profile">
+</form>

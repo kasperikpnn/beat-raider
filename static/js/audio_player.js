@@ -22,12 +22,13 @@ function playMusic(index) {
     }
     if (audio.paused) {
         audio.play();
-        isPlaying = true; 
+        isPlaying = true;
+        currentAudio = audio;
     } else {
         audio.pause();
-        isPlaying = false; 
+        isPlaying = false;
+        currentAudio = null;
     }
-    currentAudio = audio;
 
     if (isPlaying) {
         updateSeekBar(audio);
@@ -68,9 +69,20 @@ function handleSeekClick(event, index) {
     const segmentIndex = Math.floor(clickX / segmentWidth);
     const newTime = (segmentIndex / totalParts) * audio.duration;
     audio.currentTime = newTime;
-    if (audio.paused) {
-        audio.play();
+
+    if (currentAudio && currentAudio !== audio) {
+        currentAudio.pause();
+        audio.play()
+        currentAudio = audio;
+        isPlaying = true;
     }
+
+    if (audio.paused && isPlaying) {
+        audio.play();
+        currentAudio = audio;
+        isPlaying = true;
+    }
+
     updateSeekBar(audio);
 }
 

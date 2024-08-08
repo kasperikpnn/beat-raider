@@ -1,10 +1,14 @@
 import os
+import random
 from sqlalchemy import text
 from flask import abort, request, session
 from db import db
 import idgen
+from tempfile import gettempdir
 import users
 from mutagen.mp3 import MP3
+import datetime as dt
+from datetime import timedelta
 
 class SongManager:
     def __init__(self, upload_folder):
@@ -13,7 +17,8 @@ class SongManager:
 
     def calcduration(self, song_data):
         # Write the song data to a temporary file to calculate its duration
-        temp_path = os.path.join('temp', 'temp_song.mp3')
+        temp_dir = gettempdir()
+        temp_path = os.path.join(temp_dir, 'temp_song.mp3')
         with open(temp_path, 'wb') as f:
             f.write(song_data)
         audio = MP3(temp_path)
@@ -24,6 +29,7 @@ class SongManager:
         return duration
 
     def save_song(self, user_id, song_data, name, genre, duration, timestamp):
+        duration = str(timedelta(seconds=duration))
         id = idgen.generate_id()
         filename = f"{id}.mp3"
         file_path = os.path.join(self.upload_folder, filename)
@@ -41,10 +47,10 @@ class SongManager:
         result = db.session.execute(sql, {"song_id":song_id})
         song = result.fetchone()
         if not song:
-            print("No song found")
+            print("No song found") ## Debugging
             return -1
         print(song)
-        print("Song found")
+        print("Song found") ## Debugging
         return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0]]
         ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID
 
@@ -69,3 +75,35 @@ class SongManager:
                 songs.append(SongManager.getinfo(self, song.id))
         print(songs)
         return songs
+    
+    def get_random_songs(self, limit):
+        sql = text("SELECT id FROM songs ORDER BY RANDOM() LIMIT :limit")
+        result = db.session.execute(sql, {"limit":limit})
+        songs = []
+        if result:
+            for song in result:
+                songs.append(SongManager.getinfo(self, song.id))
+        print(songs)
+        return songs
+
+    def get_recent_songs(self, limit, offset=0):
+        # Retrieve songs with limit and offset for pagination
+        sql = text("SELECT id FROM songs ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+
+        result = db.session.execute(sql, {"limit": limit, "offset": offset})
+        songs = []
+        
+        if result:
+            for song in result:
+                songs.append(SongManager.getinfo(self, song.id))
+        
+        print(songs)
+        return songs
+    
+    def total_songs(self):
+        sql = text("SELECT COUNT(*) FROM songs")
+        result = db.session.execute(sql)
+        if result:
+            return result.scalar()
+        else:
+            return 0

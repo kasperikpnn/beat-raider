@@ -3,6 +3,7 @@ CREATE TABLE users (
     name TEXT,
     artist_name TEXT,
     password TEXT,
+    description TEXT,
     is_admin BOOLEAN DEFAULT FALSE
 );
 
@@ -11,7 +12,7 @@ CREATE TABLE songs (
     user_id INT,
     name TEXT,
     genre TEXT,
-    duration INT,
+    duration TEXT,
     likes INT DEFAULT 0,
     playcount INT DEFAULT 0,
     timestamp TIMESTAMP
@@ -34,10 +35,11 @@ CREATE TABLE liked_songs (
     PRIMARY KEY (user_id, song_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
-    type TEXT,
     user_id TEXT,
+    song_id TEXT,
     content TEXT,
     timestamp TIMESTAMP
 )
+
