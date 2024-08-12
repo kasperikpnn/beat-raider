@@ -7,8 +7,8 @@ BeatRaider is an audio uploading and streaming service, most similar to SoundClo
 - clone this repository
 - create a file called `.env` in the root of the folder, containing these lines:
 ```
-DATABASE_URL=postgresql://devuser:devpass4@localhost:5432/shared_db
-SECRET_KEY=95d3763bb55e744e77dd181a47b4e1c6
+DATABASE_URL=<your database here>
+SECRET_KEY=<your secret key here>
 ```
 - activate the virtual environment and install the required libraries with the commands:
 ```
@@ -16,18 +16,10 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r ./requirements.txt
 ```
-- enter these commands to establish the user and database:
-```
-sudo -i -u postgres psql -c "CREATE USER devuser WITH PASSWORD 'devpass';"
-sudo -i -u postgres psql -c "CREATE DATABASE shared_db OWNER devuser;"
-sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE shared_db TO devuser;"
-```
 - now set the schema of the database with the command:
 ```
-psql -U devuser -d shared_db -f schema.sql
+psql < schema.sql
 ```
-- password is `devpass`
-- (you might have to set the authentication from peer -> md5 from pg_hba.conf if this doesn't work. not sure if this happens on Linux, I'm using WSL on Windows)
 - and finally, boot the app with the command
 ```
 flask run
