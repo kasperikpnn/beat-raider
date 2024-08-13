@@ -1,3 +1,5 @@
+{% extends "layout.html" %}
+{% block content %}
 <h2>Edit your profile</h2>
 
 You can leave any fields empty, if you don't wish to edit them.
@@ -20,3 +22,7 @@ New password again: <br><input type="password" name="new_password2">
 <p>
 <input type="submit" value="Edit profile">
 </form>
+
+<a href="/profile/{{ session.user_id }}">Back to profile page</a>
+
+{% endblock %}
