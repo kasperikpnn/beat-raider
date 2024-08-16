@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ song_artist}} - {{ song_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
-    <script src="{{ url_for('static', filename='js/load_more_songs.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
 </head>
 <body>
+
+{% include 'flash.html' %}
 <h1> {{ p_artistname }}</h1>
+
+
 
 {% if session.user_id == p_id %}
 <a href="/edit_profile/{{ session.user_id }}">Edit your profile page here</a>
@@ -28,6 +33,34 @@
     {% set song_timestamp = song[6] %}
     
     {% include 'song_card.html' %}
+{% endfor %}
+
+<h2>Playlists:</h2>
+{% if session.user_id == p_id %}
+<button id="createPlaylistBtn">Create New Playlist</button>
+
+<div id="createPlaylistModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create New Playlist</h2>
+        <form id="createPlaylistForm" method="post" action="/create_playlist">
+            <label for="playlistName">Playlist Name:</label>
+            <input type="text" id="playlistName" name="playlistName" required>
+            <button type="submit">Create Playlist</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% for playlist in user_playlists %}
+    {% set playlist_id = playlist[0] %}
+    {% set playlist_artist = playlist[1] %}
+    {% set playlist_artist_id = playlist[2] %}
+    {% set playlist_name = playlist[3] %}
+    {% set playlist_songcount = playlist[4] %}
+    {% set playlist_timestamp = playlist[5] %}
+
+    {% include 'playlist_card.html' %}
 {% endfor %}
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user

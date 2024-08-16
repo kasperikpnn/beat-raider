@@ -42,6 +42,13 @@ class SongManager:
         db.session.commit()
         return True
 
+    def save_playlist(self, user_id, name):
+        timestamp = dt.datetime.now()
+        sql = text("INSERT INTO playlists (user_id, name, timestamp) VALUES (:user_id, :name, :timestamp)")
+        db.session.execute(sql, {"user_id":user_id, "name":name, "timestamp":timestamp})
+        db.session.commit()
+        return True
+
     def getinfo(self, song_id):
         sql = text("SELECT id, user_id, name, genre, duration, likes, playcount, timestamp FROM songs WHERE id = :song_id")
         result = db.session.execute(sql, {"song_id":song_id})
@@ -53,6 +60,15 @@ class SongManager:
         print("Song found") ## Debugging
         return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0]]
         ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID
+
+    def getPlaylistInfo(self, playlist_id):
+        sql = text("SELECT id, user_id, name, songs, timestamp FROM playlists WHERE id = :playlist_id")
+        result = db.session.execute(sql, {"playlist_id":playlist_id})
+        playlist = result.fetchone()
+        if not playlist:
+            return []
+        return [playlist[0], users.artist(playlist[1]), playlist[1], playlist[2], playlist[3], playlist[4]]
+        ## playlist id, artist name of the creator of playlist, id of the creator of playlist, name of playlist, amount of songs on playlist, timestamp
 
     def delete_song(self, filename):
         file_path = os.path.join(self.upload_folder, filename)
@@ -76,6 +92,15 @@ class SongManager:
         print(songs)
         return songs
     
+    def get_playlists(self, user_id):
+        sql = text("SELECT id FROM playlists WHERE user_id = :user_id")
+        result = db.session.execute(sql, {"user_id":user_id})
+        playlists = []
+        if result:
+            for playlist in result:
+                playlists.append(SongManager.getPlaylistInfo(self, playlist.id))
+        return playlists
+
     def get_random_songs(self, limit):
         sql = text("SELECT id FROM songs ORDER BY RANDOM() LIMIT :limit")
         result = db.session.execute(sql, {"limit":limit})

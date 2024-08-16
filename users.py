@@ -116,5 +116,13 @@ def update_information(id, new_artistname, new_desc, old_password, new_password,
                         return "Error with changing the password"
     return ""
 
+def validate(id):
+    sql = text("SELECT id FROM users WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if not user:
+        return False
+    else:
+        return True
 
     

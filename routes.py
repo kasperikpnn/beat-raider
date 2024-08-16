@@ -1,5 +1,5 @@
 from app import app, SM
-from flask import jsonify, redirect, render_template, request, send_from_directory, session
+from flask import jsonify, redirect, render_template, request, send_from_directory, session, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import os
@@ -7,6 +7,19 @@ import users
 from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
+
+@app.route('/create_playlist', methods=['POST'])
+def create_playlist():
+    playlist_user_id = session["user_id"]
+    playlist_name = request.form.get('playlistName')
+    if playlist_name:
+        if users.validate(playlist_user_id):
+            if SM.save_playlist(playlist_user_id, playlist_name):
+                flash('Playlist created successfully!', 'success')
+    else:
+        flash('Playlist name is required.', 'error')
+    
+    return redirect(url_for('profile', user_id=session["user_id"]))  # Redirect back to the profile page
 
 @app.route('/uploads/<path:filename>')
 def send_upload(filename):
@@ -91,8 +104,8 @@ def logout():
 def profile(user_id):
     p_artistname = users.artist(user_id)
     user_songs = SM.get_songs(user_id)
-    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, p_id = int(user_id), p_desc = users.desc(user_id))
-
+    user_playlists = SM.get_playlists(user_id)
+    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, user_playlists = user_playlists, p_id = int(user_id), p_desc = users.desc(user_id))
 
 @app.route("/register", methods=["get", "post"])
 def register():
