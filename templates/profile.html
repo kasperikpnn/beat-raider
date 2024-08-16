@@ -14,9 +14,8 @@
 <body>
 
 {% include 'flash.html' %}
+
 <h1> {{ p_artistname }}</h1>
-
-
 
 {% if session.user_id == p_id %}
 <a href="/edit_profile/{{ session.user_id }}">Edit your profile page here</a>

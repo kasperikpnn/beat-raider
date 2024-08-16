@@ -8,6 +8,24 @@ from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
 
+@app.route('/add_to_playlist', methods=['POST'])
+def add_to_playlist():
+    data = request.json
+    playlist_id = data.get('playlist_id')
+    song_id = data.get('song_id')
+    
+    if not playlist_id or not song_id:
+        flash('Playlist ID and Song ID are required.', 'error')
+        return jsonify({"success": False, "message": "Playlist ID and Song ID are required."}), 400
+    
+    try:
+        SM.song_to_playlist(playlist_id, song_id)
+        flash('Song added to playlist successfully!', 'success')
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        flash(f'Failed to add song to playlist: {str(e)}', 'error')
+        return jsonify({"success": False, "message": str(e)}), 500
+
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
     playlist_user_id = session["user_id"]

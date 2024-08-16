@@ -13,6 +13,7 @@
 <body>
 <h2>Front page</h2>
 
+{% include 'flash.html' %}
 {% if session.user_name %}
 <p>You've logged in as {{ session.user_name }}</p>
 

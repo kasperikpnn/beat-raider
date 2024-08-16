@@ -110,6 +110,15 @@ class SongManager:
                 songs.append(SongManager.getinfo(self, song.id))
         print(songs)
         return songs
+    
+    def song_to_playlist(self, playlist_id, song_id):
+        sql = text("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (:playlist_id, :song_id)")
+        db.session.execute(sql, {"playlist_id":playlist_id, "song_id":song_id})
+        db.session.commit()
+        sql = text("UPDATE playlists SET songs = songs + 1 WHERE id=:playlist_id")
+        db.session.execute(sql, {"playlist_id":playlist_id})
+        db.session.commit()
+        return True
 
     def get_recent_songs(self, limit, offset=0):
         # Retrieve songs with limit and offset for pagination
