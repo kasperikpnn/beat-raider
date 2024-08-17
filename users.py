@@ -14,6 +14,7 @@ def login(name, password):
     session["user_id"] = user[1]
     session["user_name"] = name
     session["csrf_token"] = os.urandom(16).hex()
+    session["logged_in"] = True
     return True
 
 def register(name, artist_name, password):

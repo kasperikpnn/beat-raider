@@ -29,6 +29,7 @@ You can register <a href="/register">here!!</a>
         {% set song_artist = song[0] %}
         {% set song_genre = song[2] %}
         {% set song_timestamp = song[6] %}
+        {% set song_user_id = song[8] %}
         
         {% include 'song_card.html' %}
     {% endfor %}

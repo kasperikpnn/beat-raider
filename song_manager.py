@@ -44,6 +44,31 @@ class SongManager:
         db.session.commit()
         return True
 
+    def delete_song(self, song_id):
+        self.delete_song_file(song_id)
+        sql = text("DELETE FROM playlist_songs WHERE song_id = :song_id")
+        db.session.execute(sql, {"song_id":song_id})
+        db.session.commit()
+        sql = text("DELETE FROM liked_songs WHERE song_id = :song_id")
+        db.session.execute(sql, {"song_id":song_id})
+        db.session.commit()
+        sql = text("DELETE FROM comments WHERE song_id = :song_id")
+        db.session.execute(sql, {"song_id":song_id})
+        db.session.commit()
+        sql = text("DELETE FROM songs WHERE id = :song_id")
+        db.session.execute(sql, {"song_id":song_id})
+        db.session.commit()
+        return True
+
+    def delete_playlist(self, playlist_id):
+        sql = text("DELETE FROM playlist_songs WHERE playlist_id = :playlist_id")
+        db.session.execute(sql, {"song_id":playlist_id})
+        db.session.commit()
+        sql = text("DELETE FROM playlists WHERE id = :playlist_id")
+        db.session.execute(sql, {"id":playlist_id})
+        db.session.commit()
+        return True
+
     def save_playlist(self, user_id, name):
         timestamp = dt.datetime.now()
         sql = text("INSERT INTO playlists (user_id, name, timestamp) VALUES (:user_id, :name, :timestamp)")
@@ -51,8 +76,14 @@ class SongManager:
         db.session.commit()
         return True
 
+    def countSongsOnPlaylist(self, playlist_id):
+        sql = text("SELECT COUNT(*) FROM playlist_songs WHERE playlist_id = :playlist_id")
+        result = db.session.execute(sql, {"playlist_id":playlist_id})
+        count = result.scalar()
+        return count
+
     def getinfo(self, song_id):
-        sql = text("SELECT id, user_id, name, genre, duration, likes, playcount, timestamp FROM songs WHERE id = :song_id")
+        sql = text("SELECT id, user_id, name, genre, duration, likes, playcount, timestamp, description FROM songs WHERE id = :song_id")
         result = db.session.execute(sql, {"song_id":song_id})
         song = result.fetchone()
         if not song:
@@ -60,19 +91,61 @@ class SongManager:
             return -1
         print(song)
         print("Song found") ## Debugging
-        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0]]
-        ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID
+        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0], song[1], song[8]]
+        ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID, user ID, description
+
+    def update_song_info(self, song_id, delete_confirm, new_songname, new_desc, new_genre):
+        if delete_confirm == "Y":
+            self.delete_song(song_id)
+            return True
+        else:
+            if new_songname:
+                self.update_songname(song_id, new_songname)
+            if new_desc:
+                self.update_song_desc(song_id, new_desc)
+            if new_genre:
+                self.update_song_genre(song_id, new_genre)
+            return True
+
+
+    def update_songname(self, song_id, new_songname):
+        try:
+            sql = text("UPDATE songs SET name=:new_songname WHERE id=:song_id")
+            db.session.execute(sql, {"new_songname":new_songname, "song_id":song_id})
+            db.session.commit()
+        except:
+            return False
+        return True
+
+    def update_song_desc(self, song_id, new_desc):
+        try:
+            sql = text("UPDATE songs SET description=:new_desc WHERE id=:song_id")
+            db.session.execute(sql, {"new_desc":new_desc, "song_id":song_id})
+            db.session.commit()
+        except:
+            return False
+        return True
+
+    def update_song_genre(self, song_id, new_genre):
+        try:
+            sql = text("UPDATE songs SET genre=:new_genre WHERE id=:song_id")
+            db.session.execute(sql, {"new_genre":new_genre, "song_id":song_id})
+            db.session.commit()
+        except:
+            return False
+        return True
 
     def getPlaylistInfo(self, playlist_id):
-        sql = text("SELECT id, user_id, name, songs, timestamp FROM playlists WHERE id = :playlist_id")
+        sql = text("SELECT id, user_id, name, timestamp FROM playlists WHERE id = :playlist_id")
         result = db.session.execute(sql, {"playlist_id":playlist_id})
         playlist = result.fetchone()
         if not playlist:
             return []
-        return [playlist[0], users.artist(playlist[1]), playlist[1], playlist[2], playlist[3], playlist[4]]
-        ## playlist id, artist name of the creator of playlist, id of the creator of playlist, name of playlist, amount of songs on playlist, timestamp
+        songCount = self.countSongsOnPlaylist(playlist_id)
+        return [playlist[0], users.artist(playlist[1]), playlist[1], playlist[2], playlist[3], songCount]
+        ## playlist id, artist name of the creator of playlist, id of the creator of playlist, name of playlist, timestamp, song count
 
-    def delete_song(self, filename):
+    def delete_song_file(self, filename):
         file_path = os.path.join(self.upload_folder, filename)
         if os.path.exists(file_path):
             os.remove(file_path)
@@ -118,11 +191,6 @@ class SongManager:
             # Insert the song into the playlist
             sql = text("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (:playlist_id, :song_id)")
             db.session.execute(sql, {"playlist_id": playlist_id, "song_id": song_id})
-            db.session.commit()
-
-            # Update the song count in the playlist
-            sql = text("UPDATE playlists SET songs = songs + 1 WHERE id = :playlist_id")
-            db.session.execute(sql, {"playlist_id": playlist_id})
             db.session.commit()
             
         except IntegrityError as e:

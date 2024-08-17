@@ -23,7 +23,6 @@ CREATE TABLE playlists (
     id SERIAL PRIMARY KEY,
     user_id INT,
     name TEXT,
-    songs INT DEFAULT 0,
     timestamp TIMESTAMP
 );
 

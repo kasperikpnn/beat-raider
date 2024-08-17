@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+    <script>
+        function toggleCustomGenre(selectElement) {
+            var customGenreDiv = document.getElementById('customGenreDiv');
+            if (selectElement.value === 'Custom') {
+                customGenreDiv.style.display = 'block';
+            } else {
+                customGenreDiv.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+
+<h2>Edit your song</h2>
+
+You can leave any fields empty, if you don't wish to edit them.
+
+<form action="/edit/{{ song[7] }}" method="post">
+Current song name: {{ song[1] }}
+New song name: <br><input type="text" name="song_name">
+<p>
+Current description: {{ song[9] }}
+New description: <br><input type="text" name="desc">
+<p>
+Current genre: {{ song[2] }}
+<p>New genre:<br>
+    <select name="genre" onchange="toggleCustomGenre(this)">
+        <option value="" disabled selected>Select a genre</option>
+        <option value="Pop">Pop</option>
+        <option value="Rock">Rock</option>
+        <option value="Hip-Hop">Hip-Hop</option>
+        <option value="Jazz">Jazz</option>
+        <option value="Classical">Classical</option>
+        <option value="Electronic">Electronic</option>
+        <option value="Country">Country</option>
+        <option value="Custom">Custom Genre</option>
+    </select>
+</p>
+<div id="customGenreDiv" style="display: none;">
+    <p>Custom Genre:<br>
+        <input type="text" name="custom_genre"></p>
+</div>
+
+If you wish to delete this song, type Y in the field below
+
+Delete confirmation: <br><input type="text" name="delete_confirm">
+<p>
+<input type="hidden" name="next" value="{{ request.path }}">
+<input type="submit" value="Edit this song">
+</form>
+
+
+<a href="/profile/{{ session.user_id }}">Back to profile page</a>
+
+{% endblock %}

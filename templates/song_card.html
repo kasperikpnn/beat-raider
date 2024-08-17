@@ -12,6 +12,16 @@
     <a href="javascript:;" onclick="playMusic('{{ song_id }}')">Play/Pause</a>
     {% if session.user_name %}
     <a href="javascript:;" onclick="addToPlaylist('{{ song_id }}', '{{ request.path }}')">Add to playlist</a>
+    {% endif %}
+    {% if session.user_id == song_user_id %}
+    <a href="/edit/{{ song_id }}">Edit</a>
+    {% endif %}
+    <br>
+    <div class="seek-bar" id="seek-bar-{{ song_id }}" onclick="handleSeekClick(event, '{{ song_id }}')">
+        [···················]
+    </div>
+    <p id="time-display-{{ song_id }}">[ 0:00 - 0:00 ]</p>
+    {% if session.user_name %}
 
     <!-- Modal for adding to playlist -->
     <div id="addToPlaylistModal-{{ song_id }}" class="modal">
@@ -34,8 +44,4 @@
             </form>
         </div>
     {% endif %}
-    <div class="seek-bar" id="seek-bar-{{ song_id }}" onclick="handleSeekClick(event, '{{ song_id }}')">
-        [···················]
-    </div>
-    <p id="time-display-{{ song_id }}">[ 0:00 - 0:00 ]</p>
 </div>

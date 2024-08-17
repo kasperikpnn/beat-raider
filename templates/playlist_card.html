@@ -3,4 +3,7 @@
     <p>By: {{ playlist_artist }}</p>
     <p>Uploaded: <time id="timeago" datetime="{{ playlist_timestamp }}">{{ playlist_timestamp }}</time></p>
     <p>Songs: {{ playlist_songcount }}</p>
+    {% if session.user_id == playlist_artist_id %}
+    <a href="/editplaylist/{{ playlist_id }}">Edit</a>
+    {% endif %}
 </div>

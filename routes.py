@@ -65,14 +65,43 @@ def edit_profile(user_id):
         else:
             return render_template("error.html", message=error)
 
+@app.route("/edit/<song_id>",methods=["GET", "POST"])
+def edit(song_id):
+    if request.method == "GET":
+        song_info = SM.getinfo(song_id)
+        if song_info != -1:
+            return render_template("edit.html", song = song_info)
+        else:
+            flash(f'A song with this ID does not exist!', 'error')
+            return redirect("/")
+    if request.method == "POST":
+        delete_confirm = request.form.get('delete_confirm', '')
+        new_songname = request.form.get('song_name', '')
+        new_desc = request.form.get('desc', '')
+        new_genre = request.form.get('genre', '')
+        next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
+        if new_genre == "Custom":
+            new_genre = request.form.get('custom_genre', '')
+        print(f"delete_confirm: {delete_confirm}, new_songname: {new_songname}, new_desc: {new_desc}, new_genre: {new_genre}, song_id: {song_id}")
+        try:
+            SM.update_song_info(song_id, delete_confirm, new_songname, new_desc, new_genre)
+            if delete_confirm == "Y":
+                flash('Successfully deleted the song!', 'success')
+            else:
+                flash('Successfully updated the song information!', 'success')
+        except Exception as e:
+            flash(f'Failed to edit the song: {str(e)}', 'error')
+
+    return redirect(next_url)
+
 
 @app.route("/listen/<song_id>")
 def listen(song_id):
     song_info = SM.getinfo(song_id)
-    if session["user_id"]:
+    if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
     if song_info != -1:
-        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3])
+        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8])
     else:
         return render_template("error.html", message="Oops no song")
 
@@ -105,7 +134,8 @@ def load_more_songs():
 def index():
     recent_songs = SM.get_recent_songs(5)
     total_songs = SM.total_songs()
-    if session["user_id"]:
+    user_playlists = []
+    if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
     for song in recent_songs:
         print(song[3])
@@ -125,14 +155,18 @@ def logout():
     del session["user_name"]
     del session["user_id"]
     del session["csrf_token"]
+    del session["logged_in"]
     return redirect("/")
 
 @app.route("/profile/<user_id>", methods=["get"])
 def profile(user_id):
     p_artistname = users.artist(user_id)
     user_songs = SM.get_songs(user_id)
-    user_playlists = SM.get_playlists(user_id)
-    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, user_playlists = user_playlists, p_id = int(user_id), p_desc = users.desc(user_id))
+    user_playlists = []
+    if session.get("logged_in") == True:
+        user_playlists = SM.get_playlists(session["user_id"])
+    artist_playlists = SM.get_playlists(user_id)
+    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id))
 
 @app.route("/register", methods=["get", "post"])
 def register():
