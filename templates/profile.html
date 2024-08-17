@@ -5,15 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ song_artist}} - {{ song_name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
-    <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
-    <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
 </head>
 <body>
-
-{% include 'flash.html' %}
 
 <h1> {{ p_artistname }}</h1>
 

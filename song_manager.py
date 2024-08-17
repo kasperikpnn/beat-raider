@@ -9,6 +9,8 @@ import users
 from mutagen.mp3 import MP3
 import datetime as dt
 from datetime import timedelta
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 
 class SongManager:
     def __init__(self, upload_folder):
@@ -93,7 +95,7 @@ class SongManager:
         return songs
     
     def get_playlists(self, user_id):
-        sql = text("SELECT id FROM playlists WHERE user_id = :user_id")
+        sql = text("SELECT id FROM playlists WHERE user_id = :user_id ORDER BY timestamp")
         result = db.session.execute(sql, {"user_id":user_id})
         playlists = []
         if result:
@@ -112,12 +114,23 @@ class SongManager:
         return songs
     
     def song_to_playlist(self, playlist_id, song_id):
-        sql = text("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (:playlist_id, :song_id)")
-        db.session.execute(sql, {"playlist_id":playlist_id, "song_id":song_id})
-        db.session.commit()
-        sql = text("UPDATE playlists SET songs = songs + 1 WHERE id=:playlist_id")
-        db.session.execute(sql, {"playlist_id":playlist_id})
-        db.session.commit()
+        try:
+            # Insert the song into the playlist
+            sql = text("INSERT INTO playlist_songs (playlist_id, song_id) VALUES (:playlist_id, :song_id)")
+            db.session.execute(sql, {"playlist_id": playlist_id, "song_id": song_id})
+            db.session.commit()
+
+            # Update the song count in the playlist
+            sql = text("UPDATE playlists SET songs = songs + 1 WHERE id = :playlist_id")
+            db.session.execute(sql, {"playlist_id": playlist_id})
+            db.session.commit()
+            
+        except IntegrityError as e:
+            db.session.rollback()  # Roll back the session to maintain consistency
+            if 'duplicate key value violates unique constraint' in str(e):
+                raise UniqueViolation('The song is already in the selected playlist.')
+            else:
+                raise e  # Re-raise other integrity errors
         return True
 
     def get_recent_songs(self, limit, offset=0):

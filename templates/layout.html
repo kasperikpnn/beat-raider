@@ -1,7 +1,20 @@
 <!doctype html>
-<link rel="stylesheet" href="/static/main.css">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BeatRaider</title>
-<a href="/"><h1>BeatRaider</h1></a>
-<hr>
-{% block content %}{% endblock %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatRaider</title>
+    <link rel="stylesheet" href="/static/main.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}" defer>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}" defer>
+    <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+    <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
+</head>
+<body>
+    <a href="/"><h1>BeatRaider</h1></a>
+    <hr>
+    {% include 'flash.html' %}
+    {% block content %}{% endblock %}
+</body>
+</html>

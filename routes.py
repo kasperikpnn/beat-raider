@@ -7,24 +7,27 @@ import users
 from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
+from psycopg2.errors import UniqueViolation
 
 @app.route('/add_to_playlist', methods=['POST'])
 def add_to_playlist():
-    data = request.json
-    playlist_id = data.get('playlist_id')
-    song_id = data.get('song_id')
+    playlist_id = request.form.get('playlist_id')
+    song_id = request.form.get('song_id')
+    next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
     
     if not playlist_id or not song_id:
         flash('Playlist ID and Song ID are required.', 'error')
-        return jsonify({"success": False, "message": "Playlist ID and Song ID are required."}), 400
-    
+        return redirect(next_url)
+
     try:
         SM.song_to_playlist(playlist_id, song_id)
         flash('Song added to playlist successfully!', 'success')
-        return jsonify({"success": True}), 200
+    except UniqueViolation:
+        flash('The song is already in the selected playlist.', 'error')
     except Exception as e:
         flash(f'Failed to add song to playlist: {str(e)}', 'error')
-        return jsonify({"success": False, "message": str(e)}), 500
+
+    return redirect(next_url)
 
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
@@ -66,8 +69,10 @@ def edit_profile(user_id):
 @app.route("/listen/<song_id>")
 def listen(song_id):
     song_info = SM.getinfo(song_id)
+    if session["user_id"]:
+        user_playlists = SM.get_playlists(session["user_id"])
     if song_info != -1:
-        return render_template("song.html", song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3])
+        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3])
     else:
         return render_template("error.html", message="Oops no song")
 
@@ -100,10 +105,12 @@ def load_more_songs():
 def index():
     recent_songs = SM.get_recent_songs(5)
     total_songs = SM.total_songs()
+    if session["user_id"]:
+        user_playlists = SM.get_playlists(session["user_id"])
     for song in recent_songs:
         print(song[3])
         print(isinstance(song[3], int))
-    return render_template("index.html", recent_songs = recent_songs, total_songs = total_songs, offset=0)
+    return render_template("index.html", user_playlists = user_playlists, recent_songs = recent_songs, total_songs = total_songs, offset=0)
 
 @app.route("/login",methods=["POST"])
 def login():
@@ -116,6 +123,8 @@ def login():
 @app.route("/logout")
 def logout():
     del session["user_name"]
+    del session["user_id"]
+    del session["csrf_token"]
     return redirect("/")
 
 @app.route("/profile/<user_id>", methods=["get"])
