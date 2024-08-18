@@ -209,7 +209,9 @@ def submit():
     if genre == "Custom":
         genre = request.form['custom_genre']
     timestamp = datetime.now()
-    if SM.save_song(session["user_id"], song_data, name, genre, duration, timestamp):
-        return render_template("success.html")
-    else:
-        return render_template("error.html", message="An oopsie woopsie happened with saving the song")
+    try:
+        SM.save_song(session["user_id"], song_data, name, genre, duration, timestamp)
+        flash('Successfully uploaded the song!!', 'success')
+    except Exception as e:
+        flash(f'Failed to upload the song: {str(e)}', 'error')
+    return redirect("/profile/" + str(session["user_id"]))
