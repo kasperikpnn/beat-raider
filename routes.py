@@ -72,7 +72,7 @@ def edit(song_id):
         if song_info != -1:
             return render_template("edit.html", song = song_info)
         else:
-            flash(f'A song with this ID does not exist!', 'error')
+            flash(f'A song with provided ID does not exist!', 'error')
             return redirect("/")
     if request.method == "POST":
         delete_confirm = request.form.get('delete_confirm', '')
@@ -91,6 +91,30 @@ def edit(song_id):
                 flash('Successfully updated the song information!', 'success')
         except Exception as e:
             flash(f'Failed to edit the song: {str(e)}', 'error')
+
+    return redirect(next_url)
+
+@app.route("/editplaylist/<playlist_id>",methods=["GET", "POST"])
+def editplaylist(playlist_id):
+    if request.method == "GET":
+        playlist_info = SM.getPlaylistInfo(playlist_id)
+        if playlist_info:
+            return render_template("editplaylist.html", playlist = playlist_info)
+        else:
+            flash(f'A playlist with provided ID does not exist!', 'error')
+            return redirect("/")
+    if request.method == "POST":
+        delete_confirm = request.form.get('delete_confirm', '')
+        new_playlistname = request.form.get('playlist_name', '')
+        next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
+        try:
+            SM.update_playlist_info(playlist_id, delete_confirm, new_playlistname)
+            if delete_confirm == "Y":
+                flash('Successfully deleted the playlist!', 'success')
+            else:
+                flash('Successfully updated the playlist information!', 'success')
+        except Exception as e:
+            flash(f'Failed to edit the playlist: {str(e)}', 'error')
 
     return redirect(next_url)
 

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Edit your playlist</h2>
+
+You can leave any fields empty, if you don't wish to edit them.
+
+<form action="/editplaylist/{{ playlist[0] }}" method="post">
+Current playlist name: {{ playlist[3] }}
+New playlist name: <br><input type="text" name="playlist_name">
+<p>
+If you wish to delete this playlist, type Y in the field below
+
+Delete confirmation: <br><input type="text" name="delete_confirm">
+<p>
+<input type="hidden" name="next" value="{{ request.path }}">
+<input type="submit" value="Edit this song">
+</form>
+
+
+<a href="/profile/{{ session.user_id }}">Back to profile page</a>
+
+{% endblock %}

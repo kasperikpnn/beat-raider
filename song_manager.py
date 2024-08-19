@@ -135,6 +135,24 @@ class SongManager:
             return False
         return True
 
+    def update_playlist_info(self, playlist_id, delete_confirm, new_playlistname):
+        if delete_confirm == "Y":
+            self.delete_playlist(playlist_id)
+            return True
+        else:
+            if new_playlistname:
+                self.update_playlistname(playlist_id, new_playlistname)
+            return True
+
+    def update_playlistname(self, playlist_id, new_playlistname):
+        try:
+            sql = text("UPDATE playlists SET name=:new_playlistname WHERE id=:playlist_id")
+            db.session.execute(sql, {"new_playlistname":new_playlistname, "playlist_id":playlist_id})
+            db.session.commit()
+        except:
+            return False
+        return True
+
     def getPlaylistInfo(self, playlist_id):
         sql = text("SELECT id, user_id, name, timestamp FROM playlists WHERE id = :playlist_id")
         result = db.session.execute(sql, {"playlist_id":playlist_id})
