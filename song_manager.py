@@ -7,8 +7,7 @@ import idgen
 from tempfile import gettempdir
 import users
 from mutagen.mp3 import MP3
-import datetime as dt
-from datetime import timedelta
+from datetime import timedelta, datetime
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
 
@@ -62,15 +61,15 @@ class SongManager:
 
     def delete_playlist(self, playlist_id):
         sql = text("DELETE FROM playlist_songs WHERE playlist_id = :playlist_id")
-        db.session.execute(sql, {"song_id":playlist_id})
+        db.session.execute(sql, {"playlist_id":playlist_id})
         db.session.commit()
         sql = text("DELETE FROM playlists WHERE id = :playlist_id")
-        db.session.execute(sql, {"id":playlist_id})
+        db.session.execute(sql, {"playlist_id":playlist_id})
         db.session.commit()
         return True
 
     def save_playlist(self, user_id, name):
-        timestamp = dt.datetime.now()
+        timestamp = datetime.now()
         sql = text("INSERT INTO playlists (user_id, name, timestamp) VALUES (:user_id, :name, :timestamp)")
         db.session.execute(sql, {"user_id":user_id, "name":name, "timestamp":timestamp})
         db.session.commit()
@@ -184,7 +183,17 @@ class SongManager:
                 songs.append(SongManager.getinfo(self, song.id))
         print(songs)
         return songs
-    
+
+    def get_playlist_songs(self, playlist_id):
+        sql = text("SELECT song_id FROM playlist_songs WHERE playlist_id = :playlist_id")
+        result = db.session.execute(sql, {"playlist_id":playlist_id})
+        songs = []
+        if result:
+            for song in result:
+                songs.append(SongManager.getinfo(self, song.song_id))
+        print(songs)
+        return songs
+
     def get_playlists(self, user_id):
         sql = text("SELECT id FROM playlists WHERE user_id = :user_id ORDER BY timestamp")
         result = db.session.execute(sql, {"user_id":user_id})
@@ -232,6 +241,49 @@ class SongManager:
         
         print(songs)
         return songs
+
+    def search_for_songs(self, name="", genre="", time=""):
+        query = "SELECT * FROM songs WHERE 1=1"
+    
+        if name:
+            query += " AND name LIKE :name"
+        
+        if genre:
+            query += " AND genre = :genre"
+
+        if time == "past_week":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=7)
+        elif time == "past_month":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=31)
+        elif time == "past_year":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=365)
+        elif time == "all_time":
+            start_date = None
+        else:
+            start_date = None
+
+        sql = text(query)
+        params = {}
+
+        if name:
+            params["name"] = f"%{name}%"
+        if genre:
+            params["genre"] = genre
+        if start_date:
+            params["start_date"] = start_date
+        
+        result = db.session.execute(sql, params)
+        songs = []
+        
+        if result:
+            for song in result:
+                songs.append(SongManager.getinfo(self, song.id))
+
+        return songs
+
     
     def total_songs(self):
         sql = text("SELECT COUNT(*) FROM songs")
