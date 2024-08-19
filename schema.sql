@@ -3,7 +3,7 @@ CREATE TABLE users (
     name TEXT,
     artist_name TEXT,
     password TEXT,
-    description TEXT,
+    description TEXT DEFAULT 'No description set',
     is_admin BOOLEAN DEFAULT FALSE
 );
 

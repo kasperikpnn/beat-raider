@@ -6,21 +6,27 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def login(name, password):
-    sql = text("SELECT password, id FROM users WHERE name=:name AND password=:password")
-    result = db.session.execute(sql, {"name":name, "password":password})
+    sql = text("SELECT password, id FROM users WHERE name=:name")
+    result = db.session.execute(sql, {"name":name})
     user = result.fetchone()
     if not user:
         return False
-    session["user_id"] = user[1]
-    session["user_name"] = name
-    session["csrf_token"] = os.urandom(16).hex()
-    session["logged_in"] = True
-    return True
+    else:
+        hash_value = user.password
+        if check_password_hash(hash_value, password):
+                session["user_id"] = user[1]
+                session["user_name"] = name
+                session["csrf_token"] = os.urandom(16).hex()
+                session["logged_in"] = True
+                return True
+        else:
+            return False
 
 def register(name, artist_name, password):
     try:
-        sql = text("INSERT INTO users (name, artist_name, password, description) VALUES (:name, :artist_name, :password, 'No description set')")
-        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
+        hash_value = generate_password_hash(password)
+        sql = text("INSERT INTO users (name, artist_name, password) VALUES (:name, :artist_name, :password)")
+        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":hash_value})
         db.session.commit()
     except:
         return False
@@ -28,7 +34,7 @@ def register(name, artist_name, password):
 
 def register_admin(name, artist_name, password):
     try:
-        sql = text("INSERT INTO users (name, artist_name, password, description, is_admin) VALUES (:name, :artist_name, :password, 'No description set', TRUE)")
+        sql = text("INSERT INTO users (name, artist_name, password, is_admin) VALUES (:name, :artist_name, :password, TRUE)")
         db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
         db.session.commit()
     except:

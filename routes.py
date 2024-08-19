@@ -111,6 +111,7 @@ def editplaylist(playlist_id):
             SM.update_playlist_info(playlist_id, delete_confirm, new_playlistname)
             if delete_confirm == "Y":
                 flash('Successfully deleted the playlist!', 'success')
+                next_url = "/" # Takes the user back to front page if deleted
             else:
                 flash('Successfully updated the playlist information!', 'success')
         except Exception as e:
@@ -171,7 +172,7 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     if not users.login(username, password):
-        return render_template("error.html", message="Wrong username or password!")
+        flash('Wrong username or password!', 'error')
     return redirect("/")
 
 @app.route("/logout")
@@ -191,6 +192,15 @@ def profile(user_id):
         user_playlists = SM.get_playlists(session["user_id"])
     artist_playlists = SM.get_playlists(user_id)
     return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id))
+
+@app.route("/playlist/<playlist_id>", methods=["get"])
+def playlist(playlist_id):
+    playlist_info = SM.getPlaylistInfo(playlist_id)
+    playlist_songs = SM.get_playlist_songs(playlist_id)
+    user_playlists = []
+    if session.get("logged_in") == True:
+        user_playlists = SM.get_playlists(session["user_id"])
+    return render_template("playlist.html", playlist = playlist_info, playlist_songs = playlist_songs, user_playlists = user_playlists)   
 
 @app.route("/register", methods=["get", "post"])
 def register():
