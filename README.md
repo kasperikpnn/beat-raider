@@ -27,6 +27,8 @@ flask run
 
 ## Current status
 
+Didn't quite meet my goals for this deadline, as many basic features I wanted to implement are still not there, such as searching for songs or improving the security.
+
 The user can:
 - log in and out, and create a new account
 - when registering, they can set a separate "artist name" from their username
