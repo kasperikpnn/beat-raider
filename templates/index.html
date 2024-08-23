@@ -1,37 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
 <body>
-<h2>Front page</h2>
 
-{% if session.user_name %}
-<p>You've logged in as {{ session.user_name }}</p>
-
-<a href="/upload">Upload a song</a>
-<a href="/logout">Log out</a>
-<a href="/profile/{{ session.user_id }}">Your profile page</a>
-{% else %}
-<form action="/login" method="POST">
-<p>Tunnus:<br>
-<input type="text" name="username"></p>
-<p>Salasana:<br>
-<input type="password" name="password"></p>
-<input type="submit" value="Kirjaudu">
-</form>
-{% endif %}
 You can register <a href="/register">here!!</a>
 
-<h3>Recent songs</h3>
-
 <div id="songs-container">
+    <h3>Recent songs</h3>
     {% for song in recent_songs %}
-        {% set song_id = song[7] %}
-        {% set song_name = song[1] %}
-        {% set song_artist = song[0] %}
-        {% set song_genre = song[2] %}
-        {% set song_timestamp = song[6] %}
-        {% set song_user_id = song[8] %}
-        
-        {% include 'song_card.html' %}
+            {% set song_id = song[7] %}
+            {% set song_name = song[1] %}
+            {% set song_artist = song[0] %}
+            {% set song_genre = song[2] %}
+            {% set song_timestamp = song[6] %}
+            {% set song_user_id = song[8] %}
+            {% set song_duration = song[3] %}
+            {% include 'song_card.html' %}
     {% endfor %}
 </div>
 {% if no_more_songs %}

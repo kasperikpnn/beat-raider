@@ -16,17 +16,20 @@
 <p>User description:</p>
 <p>{{ p_desc }}</p>
 
-<h2>Songs:</h2>
-{% for song in user_songs %}
-    {% set song_id = song[7] %}
-    {% set song_name = song[1] %}
-    {% set song_artist = song[0] %}
-    {% set song_genre = song[2] %}
-    {% set song_timestamp = song[6] %}
-    {% set song_user_id = song[8] %}
-    
-    {% include 'song_card.html' %}
-{% endfor %}
+
+<div id="songs-container">
+    <h3>Recent songs</h3>
+    {% for song in user_songs %}
+            {% set song_id = song[7] %}
+            {% set song_name = song[1] %}
+            {% set song_artist = song[0] %}
+            {% set song_genre = song[2] %}
+            {% set song_timestamp = song[6] %}
+            {% set song_user_id = song[8] %}
+            {% set song_duration = song[3] %}
+            {% include 'song_card.html' %}
+    {% endfor %}
+</div>
 
 <h2>Playlists:</h2>
 {% if session.user_id == p_id %}
@@ -45,16 +48,20 @@
 </div>
 {% endif %}
 
-{% for playlist in artist_playlists %}
-    {% set playlist_id = playlist[0] %}
-    {% set playlist_artist = playlist[1] %}
-    {% set playlist_artist_id = playlist[2] %}
-    {% set playlist_name = playlist[3] %}
-    {% set playlist_songcount = playlist[5] %}
-    {% set playlist_timestamp = playlist[4] %}
+<div id="playlist-container">
+    <h3>Playlists</h3>
+    {% for playlist in artist_playlists %}
+        {% set playlist_id = playlist[0] %}
+        {% set playlist_artist = playlist[1] %}
+        {% set playlist_artist_id = playlist[2] %}
+        {% set playlist_name = playlist[3] %}
+        {% set playlist_songcount = playlist[5] %}
+        {% set playlist_timestamp = playlist[4] %}
 
-    {% include 'playlist_card.html' %}
-{% endfor %}
+        {% include 'playlist_card.html' %}
+    {% endfor %}
+</div>
+
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
     // Select all elements with the id 'timeago'

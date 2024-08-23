@@ -2,7 +2,93 @@ body {
     margin: auto;
     max-width: 45em;
     font-family: 'Helvetica', 'Arial', sans-serif;
-    background-color: #ddffff;
+    background-color: #73a5bc;
+}
+
+.header {
+    margin: auto;
+    max-width: 60em;
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+}
+
+.headertitle {
+    margin: auto;
+    max-width: 60em;
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+}
+
+#songs-container {
+    display: flex;
+    flex-direction: column; /* Stack the song boxes vertically */
+    align-items: center; /* Center the song boxes */
+    gap: 20px; /* Space between each song box */
+    width: 100%; /* Make sure the container is full width */
+    padding: 0; /* Remove any padding to prevent extra space */
+    background: none; /* Ensure no background color */
+    box-shadow: none; /* Remove any box-shadow from the container */
+}
+
+#playlist-container {
+    display: flex;
+    flex-direction: column; /* Stack the song boxes vertically */
+    align-items: center; /* Center the song boxes */
+    gap: 20px; /* Space between each song box */
+    width: 100%; /* Make sure the container is full width */
+    padding: 0; /* Remove any padding to prevent extra space */
+    background: none; /* Ensure no background color */
+    box-shadow: none; /* Remove any box-shadow from the container */
+}
+
+.options {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column; /* Stack the options vertically */
+    gap: 10px; /* Space between each option */
+    width: auto; /* Set width to auto to avoid overflowing */
+    background: none; /* No background color */
+    box-shadow: none; /* Remove any box-shadow from the container */
+    text-align: right; /* Ensure text is aligned to the right */
+}
+
+.login {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column; /* Stack the options vertically */
+    gap: 10px; /* Space between each option */
+    width: auto; /* Set width to auto to avoid overflowing */
+    background: none; /* No background color */
+    box-shadow: none; /* Remove any box-shadow from the container */
+    text-align: right; /* Ensure text is aligned to the right */
+}
+
+.song {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Make the song boxes take full width within the container */
+    max-width: 600px; /* Limit the maximum width of the song boxes */
+    box-sizing: border-box; /* Ensure padding doesn't affect the box width */
+    margin: 0 auto; /* Ensure it's centered */
+}
+
+.playlist {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Make the song boxes take full width within the container */
+    max-width: 600px; /* Limit the maximum width of the song boxes */
+    box-sizing: border-box; /* Ensure padding doesn't affect the box width */
+    margin: 0 auto; /* Ensure it's centered */
 }
 
 table {
@@ -18,13 +104,17 @@ td, th {
 .flash-messages {
     list-style-type: none;
     padding: 0;
+    margin: 0;
   }
   
-  .flash-messages li {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    color: #fff;
+  .flash-message {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    border-radius: 1px;
+    background-color: transparent;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .flash-messages .success {
@@ -34,3 +124,21 @@ td, th {
   .flash-messages .error {
     background-color: #f44336;
   }
+
+.login-button {
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+    color: #007bff; /* Text color, adjust as needed */
+    font: inherit; /* Inherit font styles from parent */
+    cursor: pointer; /* Show pointer cursor on hover */
+    padding: 0; /* Remove default padding */
+    text-decoration: underline; /* Optional: underline text to indicate it's clickable */
+}
+
+.login-button:hover {
+    color: #0056b3; /* Change color on hover, adjust as needed */
+}
+
+.login-button:focus {
+    outline: none; /* Remove default focus outline */
+}

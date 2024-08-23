@@ -123,6 +123,7 @@ def editplaylist(playlist_id):
 @app.route("/listen/<song_id>")
 def listen(song_id):
     song_info = SM.getinfo(song_id)
+    user_playlists = []
     if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
     if song_info != -1:
@@ -210,23 +211,29 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         if len(username) < 1 or len(username) > 20:
-            return render_template("error.html", message="Username too short or long! (1-20 characters)")
+            flash('The username is too short or too long! (max 20 characters)', 'error')
+            return redirect("/register")
 
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         if password1 != password2:
-            return render_template("error.html", message="The passwords aren't matching!")
+            flash('The passwords are not matching!', 'error')
+            return redirect("/register")
         if password1 == "":
-            return render_template("error.html", message="The password is empty!")
+            flash('The password is empty!', 'error')
+            return redirect("/register")
 
         artist_name = request.form["artist_name"]
         if len(artist_name) > 100:
-            return render_template("error.html", message="Artist name too long! (max 100 characters)")
+            flash('The artist name is too long! (max 100 characters)!', 'error')
+            return redirect("/register")
         elif len(artist_name) == 0:
             artist_name = username
 
         if users.register(username, artist_name, password1) == False:
-            return render_template("error.html", message="Rekisteröinti ei onnistunut")
+            flash('Registration unsuccessful for an unknown reason', 'error')
+            return redirect("/")
+        flash('Registration successful!', 'success')
         return redirect("/")
 
 @app.route("/upload", methods=["GET", "POST"])

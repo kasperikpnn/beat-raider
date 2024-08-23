@@ -34,8 +34,9 @@ def register(name, artist_name, password):
 
 def register_admin(name, artist_name, password):
     try:
+        hash_value = generate_password_hash(password)
         sql = text("INSERT INTO users (name, artist_name, password, is_admin) VALUES (:name, :artist_name, :password, TRUE)")
-        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":password})
+        db.session.execute(sql, {"name":name, "artist_name":artist_name, "password":hash_value})
         db.session.commit()
     except:
         return False

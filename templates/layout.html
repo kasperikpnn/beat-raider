@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeatRaider</title>
-    <link rel="stylesheet" href="/static/main.css">
+    <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}" defer>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}" defer>
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
@@ -12,7 +12,34 @@
     <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
 </head>
 <body>
-    <a href="/"><h1>BeatRaider</h1></a>
+    
+    <div class="header">
+        ((d[-_-]b))
+        <div class="headertitle">
+             <a href="/"><h1>&lt;(^^&lt;)   BeatRaider   (&gt;^^)&gt;</h1></a> 
+        </div>
+        ((d[-_-]b))
+    </div>
+
+    <div class="options">
+        {% if session.user_name %}
+            <p>You've logged in as {{ session.user_name }}</p>
+            <a href="/upload">Upload a song</a>
+            <a href="/profile/{{ session.user_id }}">Your profile page</a>
+            <a href="/logout">Log out</a>
+        {% else %}
+            <div class="login">
+            <form action="/login" method="POST">
+            <p>Username:<br>
+            <input type="text" name="username"></p>
+            <p>Password:<br>
+            <input type="password" name="password"></p>
+            <button type="submit" class="login-button">Log in</button>
+            </form>
+            </div>
+        {% endif %}
+    </div>
+    
     <hr>
     {% include 'flash.html' %}
     {% block content %}{% endblock %}
