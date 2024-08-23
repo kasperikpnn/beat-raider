@@ -3,7 +3,7 @@ from db import db
 from flask import abort, request, session
 from sqlalchemy import text
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from markupsafe import Markup
 
 def login(name, password):
     sql = text("SELECT password, id FROM users WHERE name=:name")
@@ -67,7 +67,9 @@ def desc(id):
     if not desc:
         return "Error"
     else:
-        return desc[0]
+        description = desc[0].replace('\n', '<br>')
+        description = Markup(description)
+        return description
 
 def change_artistname(id, new_artistname):
     try:
@@ -98,8 +100,9 @@ def password(id):
     
 def change_password(id, new_password):
     try:
-        sql = text ("UPDATE users SET password=:new_password WHERE id=:id")
-        db.session.execute(sql, {"new_password":new_password, "id":id})
+        hash_value = generate_password_hash(new_password)
+        sql = text("UPDATE users SET password=:new_password WHERE id=:id")
+        db.session.execute(sql, {"new_password":hash_value, "id":id})
         db.session.commit()
     except:
         return False
@@ -118,7 +121,7 @@ def update_information(id, new_artistname, new_desc, old_password, new_password,
                 return "Error with changing the description"
     if new_password:
         if old_password:
-            if old_password == password(id):
+            if check_password_hash(password(id), old_password):
                 if new_password == new_password2:
                     if not change_password(id, new_password):
                         return "Error with changing the password"
@@ -127,6 +130,15 @@ def update_information(id, new_artistname, new_desc, old_password, new_password,
 def validate(id):
     sql = text("SELECT id FROM users WHERE id=:id")
     result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if not user:
+        return False
+    else:
+        return True
+
+def user_exists(name):
+    sql = text("SELECT name FROM users WHERE name=:name")
+    result = db.session.execute(sql, {"name":name})
     user = result.fetchone()
     if not user:
         return False

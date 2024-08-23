@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name TEXT UNIQUE,
     artist_name TEXT,
     password TEXT,
     description TEXT DEFAULT 'No description set',
@@ -13,7 +13,7 @@ CREATE TABLE songs (
     name TEXT,
     genre TEXT,
     duration TEXT,
-    description TEXT,
+    description TEXT DEFAULT 'No description set',
     likes INT DEFAULT 0,
     playcount INT DEFAULT 0,
     timestamp TIMESTAMP

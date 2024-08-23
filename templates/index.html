@@ -2,7 +2,11 @@
 {% block content %}
 <body>
 
-You can register <a href="/register">here!!</a>
+23/08/2024: The site is progressing well! Beat raiders unite!!!! (•_•) ( •_•)>⌐■-■ (⌐■_■) - Neotride
+<p>
+{% if not session.user_name %}
+    You can register <a href="/register">here!!</a>
+{% endif %}
 
 <div id="songs-container">
     <h3>Recent songs</h3>
@@ -21,15 +25,19 @@ You can register <a href="/register">here!!</a>
     <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
 {% endif %}
 
+<!-- Back Button -->
 <form id="back-form" method="post" action="/load_more_songs">
-    <input type="hidden" name="offset" value="{% if offset - (2 * 5) < 0 %}0{% else %}{{ offset - (2 * 5) }}{% endif %}">
+    <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
     <input type="hidden" name="direction" value="back">
+    <input type="hidden" name="next_url" value="index.html">
     <button type="submit" {% if offset == 0 %}disabled{% endif %}>Back</button>
 </form>
 
+<!-- Load More Button -->
 <form id="load-more-form" method="post" action="/load_more_songs">
     <input type="hidden" name="offset" value="{{ offset }}">
-    <button type="submit" {% if total_songs <= recent_songs|length %}disabled{% endif %}>Load More Songs</button>
+    <input type="hidden" name="next_url" value="index.html">
+    <button type="submit" {% if offset + limit >= total_songs %}disabled{% endif %}>Load More Songs</button>
 </form>
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user

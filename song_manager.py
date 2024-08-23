@@ -2,6 +2,7 @@ import os
 import random
 from sqlalchemy import text
 from flask import abort, request, session
+from markupsafe import Markup
 from db import db
 import idgen
 from tempfile import gettempdir
@@ -90,6 +91,8 @@ class SongManager:
             return -1
         print(song)
         print("Song found") ## Debugging
+        description = song[8].replace('\n', '<br>') if song[8] is not None else ""
+        description = Markup(description)
         return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0], song[1], song[8]]
         ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID, user ID, description
 
@@ -174,9 +177,9 @@ class SongManager:
             return self.save_song(new_file)
         return None
 
-    def get_songs(self, user_id):
-        sql = text("SELECT id FROM songs WHERE user_id = :user_id")
-        result = db.session.execute(sql, {"user_id":user_id})
+    def get_songs(self, user_id, limit, offset=0):
+        sql = text("SELECT id FROM songs WHERE user_id = :user_id ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+        result = db.session.execute(sql, {"user_id":user_id, "limit": limit, "offset": offset})
         songs = []
         if result:
             for song in result:
@@ -288,6 +291,22 @@ class SongManager:
     def total_songs(self):
         sql = text("SELECT COUNT(*) FROM songs")
         result = db.session.execute(sql)
+        if result:
+            return result.scalar()
+        else:
+            return 0
+        
+    def total_user_songs(self, user_id):
+        sql = text("SELECT COUNT(*) FROM songs WHERE user_id=:user_id")
+        result = db.session.execute(sql, {"user_id":user_id})
+        if result:
+            return result.scalar()
+        else:
+            return 0
+        
+    def total_playlist_songs(self, playlist_id):
+        sql = text("SELECT COUNT(*) FROM playlist_songs WHERE playlist_id=:playlist_id")
+        result = db.session.execute(sql, {"playlist_id":playlist_id})
         if result:
             return result.scalar()
         else:

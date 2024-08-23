@@ -1,5 +1,5 @@
 from app import app, SM
-from flask import jsonify, redirect, render_template, request, send_from_directory, session, flash, url_for
+from flask import jsonify, get_flashed_messages, redirect, render_template, request, send_from_directory, session, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import os
@@ -72,7 +72,10 @@ def edit(song_id):
         if song_info != -1:
             return render_template("edit.html", song = song_info)
         else:
-            flash(f'A song with provided ID does not exist!', 'error')
+            existing_messages = get_flashed_messages(with_categories=True)
+            specific_message_exists = any(category == 'success' and message == 'Successfully deleted the song!' for category, message in existing_messages)
+            if not specific_message_exists:
+                flash(f'A song with provided ID does not exist!', 'error')
             return redirect("/")
     if request.method == "POST":
         delete_confirm = request.form.get('delete_confirm', '')
@@ -87,6 +90,7 @@ def edit(song_id):
             SM.update_song_info(song_id, delete_confirm, new_songname, new_desc, new_genre)
             if delete_confirm == "Y":
                 flash('Successfully deleted the song!', 'success')
+                next_url = url_for('profile', user_id=session['user_id'])
             else:
                 flash('Successfully updated the song information!', 'success')
         except Exception as e:
@@ -129,36 +133,80 @@ def listen(song_id):
     if song_info != -1:
         return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8])
     else:
-        return render_template("error.html", message="Oops no song")
+        flash('Song not found with this ID! Oopsie!', 'error')
+        return redirect("/")
 
-@app.route('/load_more_songs', methods=['GET', 'POST'])
+@app.route('/load_more_songs', methods=['POST'])
 def load_more_songs():
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
+    next_url = request.form.get('next_url')
     
     # Determine if the request is for going back
     direction = request.form.get('direction')
     if direction == 'back':
-        offset = max(0, offset - (2 * limit))  # Go back by the limit amount, ensuring it doesn't go below 0
+        offset = max(0, offset - limit)  # Go back by the limit amount, ensuring it doesn't go below 0
+    else:
+        offset += limit  # Move forward by the limit amount
 
-    # Get recent songs
+    # Get recent songs with pagination
     recent_songs = SM.get_recent_songs(limit, offset)
     
     # Get the total number of songs
-    total_songs = SM.total_songs()  # You will need to implement this method
+    total_songs = SM.total_songs()
 
     # Check if there are no more songs to load
-    no_more_songs = len(recent_songs) == 0
+    no_more_songs = offset + limit >= total_songs
 
-    return render_template('index.html', 
+    return render_template(next_url, 
                            recent_songs=recent_songs, 
-                           offset=offset + limit,  # Update offset for the next load
+                           offset=offset,  # Update offset for the next load
                            no_more_songs=no_more_songs,
-                           total_songs=total_songs)  # Pass total songs to template
+                           total_songs=total_songs,
+                           limit=limit)  # Pass limit to template
+
+@app.route('/load_more_user_songs', methods=['POST'])
+def load_more_user_songs():
+    limit = 5  # Number of songs to load each time
+    offset = request.form.get('offset', default=0, type=int)
+    next_url = request.form.get('next_url')
+    user_id = request.form.get('user_id')
+    p_artistname = users.artist(user_id)
+    user_playlists = []
+    if session.get("logged_in") == True:
+        user_playlists = SM.get_playlists(session["user_id"])
+    artist_playlists = SM.get_playlists(user_id)
+    # Determine if the request is for going back
+    direction = request.form.get('direction')
+    if direction == 'back':
+        offset = max(0, offset - limit)  # Go back by the limit amount, ensuring it doesn't go below 0
+    else:
+        offset += limit  # Move forward by the limit amount
+
+    user_songs = SM.get_songs(user_id, limit, offset)
+    
+    # Get the total number of songs
+    total_songs = SM.total_user_songs(user_id)
+
+    # Check if there are no more songs to load
+    no_more_songs = offset + limit >= total_songs
+
+    return render_template(next_url, 
+                           user_songs=user_songs, 
+                           offset=offset,  # Update offset for the next load
+                           no_more_songs=no_more_songs,
+                           total_songs=total_songs,
+                           p_artistname = p_artistname,
+                           user_playlists=user_playlists,
+                           artist_playlists=artist_playlists,
+                           p_id = int(user_id),
+                           p_desc = users.desc(user_id),
+                           limit=limit)  # Pass limit to template
 
 @app.route("/")
 def index():
-    recent_songs = SM.get_recent_songs(5)
+    limit = 5
+    recent_songs = SM.get_recent_songs(limit)
     total_songs = SM.total_songs()
     user_playlists = []
     if session.get("logged_in") == True:
@@ -166,7 +214,7 @@ def index():
     for song in recent_songs:
         print(song[3])
         print(isinstance(song[3], int))
-    return render_template("index.html", user_playlists = user_playlists, recent_songs = recent_songs, total_songs = total_songs, offset=0)
+    return render_template("index.html", user_playlists = user_playlists, recent_songs = recent_songs, total_songs = total_songs, offset=0, limit = limit)
 
 @app.route("/login",methods=["POST"])
 def login():
@@ -186,22 +234,26 @@ def logout():
 
 @app.route("/profile/<user_id>", methods=["get"])
 def profile(user_id):
+    limit = 5
     p_artistname = users.artist(user_id)
-    user_songs = SM.get_songs(user_id)
+    total_songs = SM.total_user_songs(user_id)
+    user_songs = SM.get_songs(user_id, limit)
     user_playlists = []
     if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
     artist_playlists = SM.get_playlists(user_id)
-    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id))
+    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, total_songs = total_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id), offset=0, limit = limit)
 
 @app.route("/playlist/<playlist_id>", methods=["get"])
 def playlist(playlist_id):
+    limit = 5
     playlist_info = SM.getPlaylistInfo(playlist_id)
+    total_songs = SM.total_songs()
     playlist_songs = SM.get_playlist_songs(playlist_id)
     user_playlists = []
     if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
-    return render_template("playlist.html", playlist = playlist_info, playlist_songs = playlist_songs, user_playlists = user_playlists)   
+    return render_template("playlist.html", playlist = playlist_info, playlist_songs = playlist_songs, total_songs = total_songs, user_playlists = user_playlists, offset=0, limit = limit)   
 
 @app.route("/register", methods=["get", "post"])
 def register():
@@ -212,6 +264,10 @@ def register():
         username = request.form["username"]
         if len(username) < 1 or len(username) > 20:
             flash('The username is too short or too long! (max 20 characters)', 'error')
+            return redirect("/register")
+
+        if users.user_exists(username):
+            flash('This username is already in use!', 'error')
             return redirect("/register")
 
         password1 = request.form["password1"]
@@ -234,11 +290,16 @@ def register():
             flash('Registration unsuccessful for an unknown reason', 'error')
             return redirect("/")
         flash('Registration successful!', 'success')
+        users.login(username, password1)
         return redirect("/")
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    return render_template("upload.html")
+    if session.get("logged_in") == True:
+        return render_template("upload.html")
+    else:
+        flash('Uploading allowed only for users!', 'error')
+        return redirect("/")
 
 @app.route("/submit", methods=["POST"])
 def submit():

@@ -18,7 +18,7 @@
 
 
 <div id="songs-container">
-    <h3>Recent songs</h3>
+    <h3>User songs</h3>
     {% for song in user_songs %}
             {% set song_id = song[7] %}
             {% set song_name = song[1] %}
@@ -30,6 +30,26 @@
             {% include 'song_card.html' %}
     {% endfor %}
 </div>
+{% if no_more_songs %}
+    <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
+{% endif %}
+
+<!-- Back Button -->
+<form id="back-form" method="post" action="/load_more_user_songs">
+    <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
+    <input type="hidden" name="direction" value="back">
+    <input type="hidden" name="user_id" value="{{ p_id }}">
+    <input type="hidden" name="next_url" value="profile.html">
+    <button type="submit" {% if offset == 0 %}disabled{% endif %}>Back</button>
+</form>
+
+<!-- Load More Button -->
+<form id="load-more-form" method="post" action="/load_more_user_songs">
+    <input type="hidden" name="offset" value="{{ offset }}">
+    <input type="hidden" name="user_id" value="{{ p_id }}">
+    <input type="hidden" name="next_url" value="profile.html">
+    <button type="submit" {% if offset + limit >= total_songs %}disabled{% endif %}>Load More Songs</button>
+</form>
 
 <h2>Playlists:</h2>
 {% if session.user_id == p_id %}
