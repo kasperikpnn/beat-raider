@@ -41,6 +41,7 @@
     <input type="hidden" name="direction" value="back">
     <input type="hidden" name="user_id" value="{{ p_id }}">
     <input type="hidden" name="next_url" value="profile.html">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     <button type="submit">Back</button>
 </form>
 {% endif %}
@@ -51,6 +52,7 @@
     <input type="hidden" name="offset" value="{{ offset }}">
     <input type="hidden" name="user_id" value="{{ p_id }}">
     <input type="hidden" name="next_url" value="profile.html">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     <button type="submit">Load More Songs</button>
 </form>
 {% endif %}
@@ -66,6 +68,7 @@
         <form id="createPlaylistForm" method="post" action="/create_playlist">
             <label for="playlistName">Playlist Name:</label>
             <input type="text" id="playlistName" name="playlistName" required>
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
             <button type="submit">Create Playlist</button>
         </form>
     </div>

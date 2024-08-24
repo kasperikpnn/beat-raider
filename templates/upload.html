@@ -38,6 +38,7 @@
             <label for="song_uploads">Choose a song to upload (MP3)</label>
             <input type="file" name="song" accept=".MP3" required />
         </div>
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
         <div>
             <button type="submit">Submit</button>
         </div>

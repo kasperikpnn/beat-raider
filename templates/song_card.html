@@ -30,6 +30,7 @@
             <h2>Select Playlist</h2>
             <form id="addToPlaylistForm-{{ song_id }}" method="post" action="/add_to_playlist">
                 <input type="hidden" name="next" value="{{ request.path }}">
+                <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
                 <input type="hidden" name="playlist_id" id="playlist_id-{{ song_id }}">
                 <input type="hidden" name="song_id" value="{{ song_id }}">
                 <ul id="playlistList-{{ song_id }}">

@@ -21,6 +21,7 @@ New password: <br><input type="password" name="new_password">
 New password again: <br><input type="password" name="new_password2">
 <p>
 <input type="hidden" name="next" value="{{ next_url }}">
+<input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
 <input type="submit" value="Edit profile">
 </form>
 

@@ -29,6 +29,7 @@
 <form id="back-form" method="post" action="/load_more_songs">
     <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
     <input type="hidden" name="direction" value="back">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     <input type="hidden" name="next_url" value="index.html">
     <button type="submit">Back</button>
 </form>
@@ -37,6 +38,7 @@
 {% if offset + limit < total_songs and total_songs > 0 %}
 <form id="load-more-form" method="post" action="/load_more_songs">
     <input type="hidden" name="offset" value="{{ offset }}">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     <input type="hidden" name="next_url" value="index.html">
     <button type="submit">Load More Songs</button>
 </form>

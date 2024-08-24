@@ -1,5 +1,5 @@
 from app import app, SM
-from flask import jsonify, get_flashed_messages, redirect, render_template, request, send_from_directory, session, flash, url_for
+from flask import jsonify, abort, get_flashed_messages, redirect, render_template, request, send_from_directory, session, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import os
@@ -11,6 +11,8 @@ from psycopg2.errors import UniqueViolation
 
 @app.route('/add_to_playlist', methods=['POST'])
 def add_to_playlist():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     playlist_id = request.form.get('playlist_id')
     song_id = request.form.get('song_id')
     next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
@@ -31,6 +33,8 @@ def add_to_playlist():
 
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     playlistCount = SM.total_user_playlists(session["user_id"])
     if playlistCount == 10:
         flash('Maximum amount of playlists already created (10)!', 'error')
@@ -64,6 +68,8 @@ def edit_profile(user_id):
                 flash("You don't have the permission to edit this user's profile!", 'error')
                 return redirect("/")
     if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
         new_artistname = request.form["artist_name"]
         new_desc = request.form["desc"]
         old_password = request.form["old_password"]
@@ -95,6 +101,8 @@ def edit(song_id):
                 flash(f'A song with provided ID does not exist!', 'error')
             return redirect("/")
     if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
         delete_confirm = request.form.get('delete_confirm', '')
         new_songname = request.form.get('song_name', '')
         new_desc = request.form.get('desc', '')
@@ -130,6 +138,8 @@ def editplaylist(playlist_id):
             flash(f'A playlist with provided ID does not exist!', 'error')
             return redirect("/")
     if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
         delete_confirm = request.form.get('delete_confirm', '')
         new_playlistname = request.form.get('playlist_name', '')
         next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
@@ -190,6 +200,8 @@ def search():
 
 @app.route('/load_more_songs', methods=['POST'])
 def load_more_songs():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
     next_url = request.form.get('next_url')
@@ -219,6 +231,8 @@ def load_more_songs():
 
 @app.route('/load_more_user_songs', methods=['POST'])
 def load_more_user_songs():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
     next_url = request.form.get('next_url')
@@ -317,6 +331,8 @@ def register():
         return render_template("register.html")
 
     if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
         username = request.form["username"]
         if len(username) < 1 or len(username) > 20:
             flash('The username is too short or too long! (max 20 characters)', 'error')
@@ -359,6 +375,8 @@ def upload():
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     song = request.files['song']
     song_data = song.read()  # Read the song data into memory
     name = request.form['song_name']

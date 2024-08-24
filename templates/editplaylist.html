@@ -14,6 +14,7 @@ If you wish to delete this playlist, type Y in the field below
 Delete confirmation: <br><input type="text" name="delete_confirm">
 <p>
 <input type="hidden" name="next" value="{{ next_url }}">
+<input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
 <input type="submit" value="Edit this song">
 </form>
 
