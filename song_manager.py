@@ -304,6 +304,14 @@ class SongManager:
         else:
             return 0
         
+    def total_user_playlists(self, user_id):
+        sql = text("SELECT COUNT(*) FROM playlists WHERE user_id=:user_id")
+        result = db.session.execute(sql, {"user_id":user_id})
+        if result:
+            return result.scalar()
+        else:
+            return 0
+        
     def total_playlist_songs(self, playlist_id):
         sql = text("SELECT COUNT(*) FROM playlist_songs WHERE playlist_id=:playlist_id")
         result = db.session.execute(sql, {"playlist_id":playlist_id})

@@ -31,6 +31,10 @@ def add_to_playlist():
 
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
+    playlistCount = SM.total_user_playlists(session["user_id"])
+    if playlistCount == 10:
+        flash('Maximum amount of playlists already created (10)!', 'error')
+        redirect(url_for('profile', user_id=session["user_id"]))
     playlist_user_id = session["user_id"]
     playlist_name = request.form.get('playlistName')
     if playlist_name:
