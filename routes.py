@@ -8,6 +8,8 @@ from fileinput import filename
 from song_manager import SongManager
 from datetime import datetime
 from psycopg2.errors import UniqueViolation
+from mutagen.mp3 import MP3
+from mutagen import MutagenError
 
 @app.route('/add_to_playlist', methods=['POST'])
 def add_to_playlist():
@@ -379,6 +381,11 @@ def submit():
         abort(403)
     song = request.files['song']
     song_data = song.read()  # Read the song data into memory
+    try:
+        mp3_file = MP3(song)
+    except MutagenError:
+        flash('The uploaded file is not a valid MP3.', 'error')
+        return redirect("/upload")
     name = request.form['song_name']
     genre = request.form['genre']
     duration = SM.calcduration(song_data)
