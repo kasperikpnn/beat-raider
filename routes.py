@@ -34,7 +34,7 @@ def create_playlist():
     playlistCount = SM.total_user_playlists(session["user_id"])
     if playlistCount == 10:
         flash('Maximum amount of playlists already created (10)!', 'error')
-        redirect(url_for('profile', user_id=session["user_id"]))
+        return redirect(url_for('profile', user_id=session["user_id"]))
     playlist_user_id = session["user_id"]
     playlist_name = request.form.get('playlistName')
     if playlist_name:
@@ -54,27 +54,40 @@ def send_upload(filename):
 @app.route("/edit_profile/<user_id>",methods=["GET", "POST"])
 def edit_profile(user_id):
     if request.method == "GET":
-        p_artistname = users.artist(user_id)
-        p_desc = users.desc(user_id)
-        return render_template("edit_profile.html", p_artistname = p_artistname, p_desc = p_desc, p_id = user_id)
+        if users.user_id_exists(user_id):
+            if str(user_id) == str(session["user_id"]):
+                p_artistname = users.artist(user_id)
+                p_desc = users.desc(user_id)
+                next_url = request.referrer or url_for('profile', user_id=session['user_id'])
+                return render_template("edit_profile.html", p_artistname = p_artistname, p_desc = p_desc, p_id = user_id, next_url = next_url)
+            else:
+                flash("You don't have the permission to edit this user's profile!", 'error')
+                return redirect("/")
     if request.method == "POST":
         new_artistname = request.form["artist_name"]
         new_desc = request.form["desc"]
         old_password = request.form["old_password"]
         new_password = request.form["new_password"]
         new_password2 = request.form["new_password2"]
+        next_url = request.form.get('next', url_for('profile', user_id=session['user_id']))
         error = users.update_information(user_id, new_artistname, new_desc, old_password, new_password, new_password2)
-        if not error:
-            return profile(user_id)
+        if error == True:
+            return redirect(next_url)
         else:
-            return render_template("error.html", message=error)
+            flash('Something went wrong with updating the information! You likely tried to change the password but they did not match.', 'error')
+            return redirect(next_url)
 
 @app.route("/edit/<song_id>",methods=["GET", "POST"])
 def edit(song_id):
     if request.method == "GET":
         song_info = SM.getinfo(song_id)
         if song_info != -1:
-            return render_template("edit.html", song = song_info)
+            if song_info[8] == session["user_id"]:
+                next_url = request.referrer or url_for('profile', user_id=session['user_id'])
+                return render_template("edit.html", song = song_info, next_url = next_url)
+            else:
+                flash("You don't have the permission to edit this song!", 'error')
+                return redirect("/")
         else:
             existing_messages = get_flashed_messages(with_categories=True)
             specific_message_exists = any(category == 'success' and message == 'Successfully deleted the song!' for category, message in existing_messages)
@@ -107,7 +120,12 @@ def editplaylist(playlist_id):
     if request.method == "GET":
         playlist_info = SM.getPlaylistInfo(playlist_id)
         if playlist_info:
-            return render_template("editplaylist.html", playlist = playlist_info)
+            if str(playlist_info[2]) == session["user_id"]:
+                next_url = request.referrer or url_for('profile', user_id=session['user_id'])
+                return render_template("editplaylist.html", playlist = playlist_info, next_url = next_url)
+            else:
+                flash("You don't have the permission to edit this playlist!", 'error')
+                return redirect("/")
         else:
             flash(f'A playlist with provided ID does not exist!', 'error')
             return redirect("/")
@@ -135,7 +153,7 @@ def listen(song_id):
     if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
     if song_info != -1:
-        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8])
+        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8], song_description = song_info[9])
     else:
         flash('Song not found with this ID! Oopsie!', 'error')
         return redirect("/")
@@ -238,15 +256,19 @@ def logout():
 
 @app.route("/profile/<user_id>", methods=["get"])
 def profile(user_id):
-    limit = 5
-    p_artistname = users.artist(user_id)
-    total_songs = SM.total_user_songs(user_id)
-    user_songs = SM.get_songs(user_id, limit)
-    user_playlists = []
-    if session.get("logged_in") == True:
-        user_playlists = SM.get_playlists(session["user_id"])
-    artist_playlists = SM.get_playlists(user_id)
-    return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, total_songs = total_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id), offset=0, limit = limit)
+    if users.user_id_exists(user_id):
+        limit = 5
+        p_artistname = users.artist(user_id)
+        total_songs = SM.total_user_songs(user_id)
+        user_songs = SM.get_songs(user_id, limit)
+        user_playlists = []
+        if session.get("logged_in") == True:
+            user_playlists = SM.get_playlists(session["user_id"])
+        artist_playlists = SM.get_playlists(user_id)
+        return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, total_songs = total_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id), offset=0, limit = limit)
+    else:
+        flash('User does not exist!', 'error')
+        return redirect("/")
 
 @app.route("/playlist/<playlist_id>", methods=["get"])
 def playlist(playlist_id):

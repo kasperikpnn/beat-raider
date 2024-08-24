@@ -112,20 +112,23 @@ def update_information(id, new_artistname, new_desc, old_password, new_password,
     if new_artistname:
         if new_artistname != artist(id):
             if len(new_artistname) > 100:
-                return "Artist name is too long!"
+                return False
             elif not change_artistname(id, new_artistname):
-                return "Error with changing the artist name"
+                return False
     if new_desc:
-        if new_desc != desc(id):
-            if not change_desc(id, new_desc):
-                return "Error with changing the description"
+        if not change_desc(id, new_desc):
+            return False
     if new_password:
         if old_password:
             if check_password_hash(password(id), old_password):
                 if new_password == new_password2:
                     if not change_password(id, new_password):
-                        return "Error with changing the password"
-    return ""
+                        return False
+                else:
+                    return False
+            else:
+                return False
+    return True
 
 def validate(id):
     sql = text("SELECT id FROM users WHERE id=:id")
@@ -145,4 +148,12 @@ def user_exists(name):
     else:
         return True
 
+def user_id_exists(id):
+    sql = text("SELECT id FROM users WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if not user:
+        return False
+    else:
+        return True
     

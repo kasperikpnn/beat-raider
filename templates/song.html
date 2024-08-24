@@ -11,6 +11,7 @@
 </head>
 <h2>Listening</h2>
 <body>
+
     {% set song_id = song %}
     {% set song_name = song_name %}
     {% set song_artist = song_artist %}
@@ -19,6 +20,12 @@
     {% set song_user_id = song_user_id %}
     
     {% include 'song_card.html' %}
+
+    <h2>Description:</h2>
+
+    {{ song_description }}
+
+    <h2>Comments:</h2>
     <script>
         // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
         // Select all elements with the id 'timeago'
