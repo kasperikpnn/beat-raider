@@ -245,7 +245,7 @@ class SongManager:
         print(songs)
         return songs
 
-    def search_for_songs(self, name="", genre="", time=""):
+    def search_for_songs(self, name="", genre="", time="", limit=5, offset=0):
         query = "SELECT * FROM songs WHERE 1=1"
     
         if name:
@@ -268,6 +268,7 @@ class SongManager:
         else:
             start_date = None
 
+        query += " ORDER BY timestamp DESC LIMIT :limit OFFSET :offset"
         sql = text(query)
         params = {}
 
@@ -277,6 +278,8 @@ class SongManager:
             params["genre"] = genre
         if start_date:
             params["start_date"] = start_date
+        params["limit"] = limit
+        params["offset"] = offset
         
         result = db.session.execute(sql, params)
         songs = []
@@ -319,3 +322,39 @@ class SongManager:
             return result.scalar()
         else:
             return 0
+        
+    def total_search_results(self, name="", genre="", time=""):
+        query = "SELECT COUNT(*) FROM songs WHERE 1=1"
+        
+        if name:
+            query += " AND name LIKE :name"
+        
+        if genre:
+            query += " AND genre = :genre"
+
+        if time == "past_week":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=7)
+        elif time == "past_month":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=31)
+        elif time == "past_year":
+            query += " AND timestamp >= :start_date"
+            start_date = datetime.now() - timedelta(days=365)
+        elif time == "all_time":
+            start_date = None
+        else:
+            start_date = None
+
+        sql = text(query)
+        params = {}
+
+        if name:
+            params["name"] = f"%{name}%"
+        if genre:
+            params["genre"] = genre
+        if start_date:
+            params["start_date"] = start_date
+        
+        result = db.session.execute(sql, params).scalar()
+        return result

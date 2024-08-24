@@ -158,6 +158,36 @@ def listen(song_id):
         flash('Song not found with this ID! Oopsie!', 'error')
         return redirect("/")
 
+@app.route('/search', methods=["GET"])
+def search():
+    name = request.args.get('name', '')
+    genre = request.args.get('genre', '')
+    time = request.args.get('time', 'all_time')
+    limit = 5  # Number of songs to display per page
+    offset = request.args.get('offset', default=0, type=int)
+
+    # Fetch search results with pagination
+    search_results = SM.search_for_songs(name=name, genre=genre, time=time, limit=limit, offset=offset)
+    
+    # Fetch the total number of results for pagination
+    total_results = SM.total_search_results(name=name, genre=genre, time=time)
+
+    no_more_results = False
+    if total_results == 0:
+        flash('No songs found!', 'error')
+    else:
+        no_more_results = offset + limit >= total_results
+
+    return render_template('search.html', 
+                           search_results=search_results, 
+                           name=name, 
+                           genre=genre, 
+                           time=time,
+                           offset=offset, 
+                           no_more_results=no_more_results,
+                           total_results=total_results,
+                           limit=limit)
+
 @app.route('/load_more_songs', methods=['POST'])
 def load_more_songs():
     limit = 5  # Number of songs to load each time

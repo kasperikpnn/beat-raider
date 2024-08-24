@@ -35,21 +35,25 @@
 {% endif %}
 
 <!-- Back Button -->
+{% if offset > 0 and total_songs > 0 %}
 <form id="back-form" method="post" action="/load_more_user_songs">
     <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
     <input type="hidden" name="direction" value="back">
     <input type="hidden" name="user_id" value="{{ p_id }}">
     <input type="hidden" name="next_url" value="profile.html">
-    <button type="submit" {% if offset == 0 %}disabled{% endif %}>Back</button>
+    <button type="submit">Back</button>
 </form>
+{% endif %}
 
 <!-- Load More Button -->
+{% if offset + limit < total_songs and total_songs > 0 %}
 <form id="load-more-form" method="post" action="/load_more_user_songs">
     <input type="hidden" name="offset" value="{{ offset }}">
     <input type="hidden" name="user_id" value="{{ p_id }}">
     <input type="hidden" name="next_url" value="profile.html">
-    <button type="submit" {% if offset + limit >= total_songs %}disabled{% endif %}>Load More Songs</button>
+    <button type="submit">Load More Songs</button>
 </form>
+{% endif %}
 
 <h2>Playlists:</h2>
 {% if session.user_id == p_id %}
@@ -69,7 +73,6 @@
 {% endif %}
 
 <div id="playlist-container">
-    <h3>Playlists</h3>
     {% for playlist in artist_playlists %}
         {% set playlist_id = playlist[0] %}
         {% set playlist_artist = playlist[1] %}

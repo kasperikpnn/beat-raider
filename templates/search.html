@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="songs-container">
+    <h3>Search Results</h3>
+    {% for song in search_results %}
+        {% set song_id = song[7] %}
+        {% set song_name = song[1] %}
+        {% set song_artist = song[0] %}
+        {% set song_genre = song[2] %}
+        {% set song_timestamp = song[6] %}
+        {% set song_user_id = song[8] %}
+        {% set song_duration = song[3] %}
+        {% include 'song_card.html' %}
+    {% endfor %}
+</div>
+
+{% if no_more_results %}
+    <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
+{% endif %}
+
+<!-- Back Button -->
+{% if offset > 0 and total_results > 0 %}
+<form id="back-form" method="get" action="{{ url_for('search') }}">
+    <input type="hidden" name="name" value="{{ name }}">
+    <input type="hidden" name="genre" value="{{ genre }}">
+    <input type="hidden" name="time" value="{{ time }}">
+    <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
+    <button type="submit">Back</button>
+</form>
+{% endif %}
+
+<!-- Load More Button -->
+{% if not no_more_results and total_results > 0 %}
+<form id="load-more-form" method="get" action="{{ url_for('search') }}">
+    <input type="hidden" name="name" value="{{ name }}">
+    <input type="hidden" name="genre" value="{{ genre }}">
+    <input type="hidden" name="time" value="{{ time }}">
+    <input type="hidden" name="offset" value="{{ offset + limit }}">
+    <button type="submit">Load More Songs</button>
+</form>
+{% endif %}
+
+<script>
+    // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
+    // Select all elements with the id 'timeago'
+    const elements = document.querySelectorAll('#timeago');
+
+    elements.forEach(el => {
+        // Get the datetime from the element
+        const datetime = el.getAttribute('datetime');
+        const timeAgoText = timeago.format(datetime);
+        el.textContent = timeAgoText;
+    });
+</script>
+{% endblock %}

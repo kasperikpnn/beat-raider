@@ -25,20 +25,23 @@
     <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
 {% endif %}
 
-<!-- Back Button -->
+{% if offset > 0 and total_songs > 0 %}
 <form id="back-form" method="post" action="/load_more_songs">
     <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
     <input type="hidden" name="direction" value="back">
     <input type="hidden" name="next_url" value="index.html">
-    <button type="submit" {% if offset == 0 %}disabled{% endif %}>Back</button>
+    <button type="submit">Back</button>
 </form>
+{% endif %}
 
-<!-- Load More Button -->
+{% if offset + limit < total_songs and total_songs > 0 %}
 <form id="load-more-form" method="post" action="/load_more_songs">
     <input type="hidden" name="offset" value="{{ offset }}">
     <input type="hidden" name="next_url" value="index.html">
-    <button type="submit" {% if offset + limit >= total_songs %}disabled{% endif %}>Load More Songs</button>
+    <button type="submit">Load More Songs</button>
 </form>
+{% endif %}
+
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
     // Select all elements with the id 'timeago'

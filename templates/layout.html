@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/audio_player.css') }}" defer>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}" defer>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
     <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
@@ -39,9 +40,61 @@
             </div>
         {% endif %}
     </div>
+
+    <form action="{{ url_for('search') }}" method="get">
+        <input type="text" name="name" placeholder="Search..." value="{{ request.args.get('name', '') }}">
+        
+        <select name="genre">
+            <option value="">All</option>
+            <option value="Pop">Pop</option>
+            <option value="Rock">Rock</option>
+            <option value="Hip-Hop">Hip-Hop</option>
+            <option value="Jazz">Jazz</option>
+            <option value="Classical">Classical</option>
+            <option value="Electronic">Electronic</option>
+            <option value="Country">Country</option>
+            <option value="Custom">Custom Genre</option>
+        </select>
+        
+        <select name="time">
+            <option value="all_time">All-time</option>
+            <option value="today">Today</option>
+            <option value="past_week">Past week</option>
+            <option value="past_month">Past month</option>
+            <option value="past_year">Past year</option>
+        </select>
+        
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
     
     <hr>
     {% include 'flash.html' %}
     {% block content %}{% endblock %}
 </body>
+
+<style>
+    form {
+        display: flex;
+        align-items: center;
+    }
+    input[type="text"] {
+        padding: 5px;
+        margin-right: 10px;
+        flex-grow: 1;
+    }
+    select {
+        padding: 5px;
+        margin-right: 10px;
+    }
+    button {
+        padding: 5px 10px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
 </html>
