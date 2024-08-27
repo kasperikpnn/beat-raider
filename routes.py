@@ -333,8 +333,6 @@ def register():
         return render_template("register.html")
 
     if request.method == "POST":
-        if session["csrf_token"] != request.form["csrf_token"]:
-            abort(403)
         username = request.form["username"]
         if len(username) < 1 or len(username) > 20:
             flash('The username is too short or too long! (max 20 characters)', 'error')

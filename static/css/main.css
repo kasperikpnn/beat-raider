@@ -142,3 +142,56 @@ td, th {
 .login-button:focus {
     outline: none; /* Remove default focus outline */
 }
+
+/* Ensure the form is aligned to the left and adjust padding */
+.vertical-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    max-width: 600px; /* Limit the maximum width of the form */
+    padding: 20px;
+    background-color: #f9f9f9; /* Optional: Add a background color to the form */
+    border-radius: 8px; /* Optional: Round the corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    margin: 0;
+    align-self: flex-start; /* Align form to the start of the container */
+}
+
+/* Align form elements and labels */
+.vertical-form label,
+.vertical-form input,
+.vertical-form select,
+.vertical-form textarea {
+    display: block;
+    width: 100%; /* Full width for inputs and select elements */
+}
+
+.vertical-form input[type="text"],
+.vertical-form textarea,
+.vertical-form select {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.vertical-form input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.7em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.vertical-form input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Align header text and form container */
+h2 {
+    margin-top: 20px;
+    text-align: left; /* Ensure header text is aligned to the left */
+    font-size: 1.5em; /* Adjust font size if needed */
+}

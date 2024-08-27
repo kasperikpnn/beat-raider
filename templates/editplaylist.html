@@ -5,17 +5,24 @@
 
 You can leave any fields empty, if you don't wish to edit them.
 
-<form action="/editplaylist/{{ playlist[0] }}" method="post">
-Current playlist name: {{ playlist[3] }}
-New playlist name: <br><input type="text" name="playlist_name">
-<p>
-If you wish to delete this playlist, type Y in the field below
+<form action="/editplaylist/{{ playlist[0] }}" method="post" class="vertical-form">
+    <div>
+        <label>Current playlist name: {{ playlist[3] }}</label>
+        <label for="playlist_name">New playlist name:</label>
+        <input id="playlist_name" type="text" name="playlist_name">
+    </div>
 
-Delete confirmation: <br><input type="text" name="delete_confirm">
-<p>
-<input type="hidden" name="next" value="{{ next_url }}">
-<input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
-<input type="submit" value="Edit this song">
+    <div>
+        <label for="delete_confirm">If you wish to delete this playlist, type Y in the field below:</label>
+        <input id="delete_confirm" type="text" name="delete_confirm">
+    </div>
+
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
+    <div>
+        <input type="submit" value="Edit this playlist">
+    </div>
 </form>
 
 
