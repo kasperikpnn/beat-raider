@@ -1,9 +1,10 @@
 import os
 from db import db
-from flask import abort, request, session
+from flask import abort, request, session, flash
 from sqlalchemy import text
 from werkzeug.security import check_password_hash, generate_password_hash
 from markupsafe import Markup
+from datetime import datetime
 
 def login(name, password):
     sql = text("SELECT password, id FROM users WHERE name=:name")
@@ -18,9 +19,35 @@ def login(name, password):
                 session["user_name"] = name
                 session["csrf_token"] = os.urandom(16).hex()
                 session["logged_in"] = True
+                if isAdmin(user.id):
+                    session["is_admin"] = True
+                    flash('Logged in as admin!', 'success')
+                else:
+                    session["is_admin"] = False
+                    flash('Logged in!', 'success')
                 return True
         else:
             return False
+
+def comment(user_id, song_id, content):
+    timestamp = datetime.now()
+    sql = text("INSERT INTO comments (user_id, song_id, content, timestamp) VALUES (:user_id, :song_id, :content, :timestamp)")
+    db.session.execute(sql, {"user_id":user_id, "song_id":song_id, "content":content, "timestamp":timestamp})
+    db.session.commit()
+
+def delete_comment(id):
+    sql = text("DELETE FROM comments WHERE id=:id")
+    db.session.execute(sql, {"id":id})
+    db.session.commit()
+
+def who_commented(id):
+    sql = text("SELECT user_id FROM comments WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if not user:
+        return None
+    else:
+        return user[0]
 
 def register(name, artist_name, password):
     try:
@@ -156,4 +183,12 @@ def user_id_exists(id):
         return False
     else:
         return True
-    
+
+def isAdmin(id):
+    sql = text("SELECT is_admin FROM users WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    if user.is_admin:
+        return True
+    else:
+        return False

@@ -10,8 +10,8 @@
 
 <h1> {{ p_artistname }}</h1>
 
-{% if session.user_id == p_id %}
-<a href="/edit_profile/{{ session.user_id }}">Edit your profile page here</a>
+{% if session.user_id == p_id or session.is_admin %}
+<a href="/edit_profile/{{ session.user_id }}">Edit profile page here</a>
 {% endif %}
 <p>User description:</p>
 <p>{{ p_desc }}</p>

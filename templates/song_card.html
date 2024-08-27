@@ -13,7 +13,7 @@
     {% if session.user_name %}
     <a href="javascript:;" onclick="addToPlaylist('{{ song_id }}', '{{ request.path }}')">Add to playlist</a>
     {% endif %}
-    {% if session.user_id == song_user_id %}
+    {% if session.user_id == song_user_id or session.is_admin %}
     <a href="/edit/{{ song_id }}">Edit</a>
     {% endif %}
     <br>

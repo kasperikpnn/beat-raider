@@ -61,7 +61,7 @@ def send_upload(filename):
 def edit_profile(user_id):
     if request.method == "GET":
         if users.user_id_exists(user_id):
-            if str(user_id) == str(session["user_id"]):
+            if str(user_id) == str(session["user_id"]) or session.get("is_admin"):
                 p_artistname = users.artist(user_id)
                 p_desc = users.desc(user_id)
                 next_url = request.referrer or url_for('profile', user_id=session['user_id'])
@@ -90,7 +90,7 @@ def edit(song_id):
     if request.method == "GET":
         song_info = SM.getinfo(song_id)
         if song_info != -1:
-            if song_info[8] == session["user_id"]:
+            if song_info[8] == session["user_id"] or session.get("is_admin"):
                 next_url = request.referrer or url_for('profile', user_id=session['user_id'])
                 return render_template("edit.html", song = song_info, next_url = next_url)
             else:
@@ -130,7 +130,7 @@ def editplaylist(playlist_id):
     if request.method == "GET":
         playlist_info = SM.getPlaylistInfo(playlist_id)
         if playlist_info:
-            if str(playlist_info[2]) == session["user_id"]:
+            if str(playlist_info[2]) == session["user_id"] or session.get("is_admin"):
                 next_url = request.referrer or url_for('profile', user_id=session['user_id'])
                 return render_template("editplaylist.html", playlist = playlist_info, next_url = next_url)
             else:

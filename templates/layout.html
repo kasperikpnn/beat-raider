@@ -24,7 +24,7 @@
 
     <div class="options">
         {% if session.user_name %}
-            <p>You've logged in as {{ session.user_name }}</p>
+            <p>You've logged in as {{ session.user_name }} {% if session.is_admin %} (admin) {% endif %}</p>
             <a href="/upload">Upload a song</a>
             <a href="/profile/{{ session.user_id }}">Your profile page</a>
             <a href="/logout">Log out</a>
