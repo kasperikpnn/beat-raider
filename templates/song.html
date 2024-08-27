@@ -26,16 +26,62 @@
     {{ song_description }}
 
     <h2>Comments:</h2>
-    <script>
-        // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
-        // Select all elements with the id 'timeago'
-        const elements = document.querySelectorAll('#timeago');
 
-        elements.forEach(el => {
-            // Get the datetime from the element
-            const datetime = el.getAttribute('datetime');
-            const timeAgoText = timeago.format(datetime);
-            el.textContent = timeAgoText;
+    {% for comment in song_comments %}
+        {% set comment_user_id = comment[0] %}
+        {% set comment_text = comment[1] %}
+        {% set comment_timestamp = comment[2] %}
+        {% set comment_artist_name = comment[3] %}
+        {% include 'comment.html' %}
+    {% endfor %}
+
+    {% if total_comments == 0 %}
+    No comments.
+    {% endif %}
+
+    <!-- Back Button -->
+    {% if offset > 0 and total_comments > 0 %}
+    <form id="back-form" method="post" action="/load_more_comments">
+        <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
+        <input type="hidden" name="direction" value="back">
+        <input type="hidden" name="user_id" value="{{ song }}">
+        <input type="hidden" name="next_url" value="{{ song }}">
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+        <button type="submit">Back</button>
+    </form>
+    {% endif %}
+
+    <!-- Load More Button -->
+    {% if offset + limit < total_comments and total_comments > 0 %}
+    <form id="load-more-form" method="post" action="/load_more_comments">
+        <input type="hidden" name="offset" value="{{ offset }}">
+        <input type="hidden" name="user_id" value="{{ song }}">
+        <input type="hidden" name="next_url" value="{{ song }}">
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+        <button type="submit">Load More Comments</button>
+    </form>
+    {% endif %}
+
+    <div class="postComment">
+        <form action="/postcomment" method="POST">
+            <input type="hidden" name="song_id" value="{{ song }}">
+            <p>Comment:<br>
+            <input type="text" name="content" minlength="1" maxlength="200" required></p>
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+            <button type="submit" class="submit">Send</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Select all 'time' elements
+            const elements = document.querySelectorAll('time');
+
+            elements.forEach(el => {
+                // Get the datetime from the element
+                const datetime = el.getAttribute('datetime');
+                const timeAgoText = timeago.format(datetime);
+                el.textContent = timeAgoText;
+            });
         });
     </script>
 </body>

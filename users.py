@@ -49,6 +49,31 @@ def who_commented(id):
     else:
         return user[0]
 
+def comment_info(id):
+    sql = text("SELECT user_id, content, timestamp FROM comments WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    comment = result.fetchone()
+    if not comment:
+        return -1
+    return [comment[0], comment[1], comment[2], artist(comment[0])] ## user_id, content, timestamp, artist name
+
+def get_comments(song_id, limit, offset=0):
+    sql = text("SELECT id FROM comments WHERE song_id=:song_id ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    result = db.session.execute(sql, {"song_id":song_id, "limit":limit, "offset":offset})
+    comments = []
+    if result:
+        for comment in result:
+            comments.append(comment_info(comment[0]))
+    return comments
+
+def how_many_comments(song_id):
+    sql = text("SELECT COUNT(*) FROM comments WHERE song_id=:song_id")
+    result = db.session.execute(sql, {"song_id":song_id})
+    if result:
+        return result.scalar()
+    else:
+        return 0
+
 def register(name, artist_name, password):
     try:
         hash_value = generate_password_hash(password)

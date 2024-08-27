@@ -164,8 +164,12 @@ def listen(song_id):
     user_playlists = []
     if session.get("logged_in") == True:
         user_playlists = SM.get_playlists(session["user_id"])
+    limit = 5
+    offset = int(request.args.get('offset', 0))
+    total_comments = users.how_many_comments(song_id)
+    song_comments = users.get_comments(song_id, limit, offset)
     if song_info != -1:
-        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8], song_description = song_info[9])
+        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8], song_description = song_info[9], song_comments = song_comments, total_comments = total_comments, offset = offset, limit = limit)
     else:
         flash('Song not found with this ID! Oopsie!', 'error')
         return redirect("/")
@@ -270,6 +274,41 @@ def load_more_user_songs():
                            p_id = int(user_id),
                            p_desc = users.desc(user_id),
                            limit=limit)  # Pass limit to template
+
+@app.route("/load_more_comments", methods=["POST"])
+def load_more_comments():
+    direction = request.form.get("direction")
+    offset = int(request.form.get("offset", 0))
+    limit = 5
+    next_url = request.form.get("next_url")
+    
+    if direction == "back":
+        offset = max(0, offset - limit)
+    else:
+        offset += limit
+    
+    # Redirect with the new offset as a query parameter
+    return redirect(f"/listen/{next_url}?offset={offset}")
+
+@app.route("/postcomment", methods=["POST"])
+def post_comment():
+    user_id = session.get("user_id")
+    song_id = request.form.get("song_id")
+    content = request.form.get("content")
+    
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    if not user_id:
+        flash('You need to be logged in to post a comment.', 'error')
+        return redirect(f"/listen/{song_id}")
+    
+    if content:
+        users.comment(user_id, song_id, content)
+        flash('Comment posted successfully!', 'success')
+    else:
+        flash('Comment content cannot be empty.', 'error')
+    
+    return redirect(f"/listen/{song_id}")
 
 @app.route("/")
 def index():
