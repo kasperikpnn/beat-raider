@@ -1,4 +1,12 @@
-<div class="comment">
-    - {{ comment_text }} - <a href="/profile/{{ comment_user_id }}">{{ comment_artist_name }}</a>
-    Posted <time datetime="{{ comment_timestamp }}">{{ comment_timestamp }}</time>
+<div class="comment-wrapper">
+    <div class="comment-bubble comment-bubble-{{ loop.index }}">
+        <a href="/profile/{{ comment_user_id }}" style="color: #000;">{{ comment_artist_name }}</a>
+        <div class="comment-content">
+            {{ comment_text }}
+        </div>
+        <time class="comment-timestamp" datetime="{{ comment_timestamp }}">{{ comment_timestamp }}</time>
+        {% if session.user_id == comment_user_id or session.is_admin %}
+            <a href="/deletecomment/{{ comment_id }}" class="delete-link">Delete</a>
+        {% endif %}
+    </div>
 </div>

@@ -32,6 +32,8 @@
         {% set comment_text = comment[1] %}
         {% set comment_timestamp = comment[2] %}
         {% set comment_artist_name = comment[3] %}
+        {% set random_class = 'comment-bubble-' ~ (loop.index % 5 + 1) %} <!-- Remnant of randomly colored comment boxes but it works so -->
+        {% set comment_id = comment[4] %}
         {% include 'comment.html' %}
     {% endfor %}
 

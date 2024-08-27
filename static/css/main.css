@@ -195,3 +195,129 @@ h2 {
     text-align: left; /* Ensure header text is aligned to the left */
     font-size: 1.5em; /* Adjust font size if needed */
 }
+
+
+
+/* General bubble styling */
+.comment-bubble {
+    position: relative; /* Allows positioning of the sharp edge */
+    max-width: 80%; /* Adjust to your needs */
+    min-width: 150px; /* Minimum width to ensure the bubble doesn't get too narrow */
+    padding: 15px; /* Added padding to accommodate the timestamp */
+    margin-bottom: 10px;
+    border-radius: 15px; /* Rounded borders for bubble effect */
+    background-color: #ffffff; /* Default background color */
+    color: #000;
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    word-wrap: break-word; /* Ensures long words break properly */
+}
+
+/* Color classes */
+.comment-bubble-1 {
+    background-color: #ffffff; /* White */
+}
+
+.comment-bubble-2 {
+    background-color: #e0f2f8; /* Very light blue */
+}
+
+.comment-bubble-3 {
+    background-color: #c2e6f1; /* Light blue */
+}
+
+.comment-bubble-4 {
+    background-color: #a3d9ea; /* Lighter blue */
+}
+
+.comment-bubble-5 {
+    background-color: #85cde3; /* Lighter version of #73a5bc */
+}
+
+/* Sharp edge effect on the lower left corner */
+.comment-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #ffffff; /* Match this color with the bubble's background color */
+    border-left: 20px solid #ffffff; /* Match this color with the bubble's background color */
+    border-radius: 0 0 15px 0; /* Sharp edge effect */
+    z-index: -1; /* Ensure it stays behind the content */
+}
+
+/* For colored bubbles */
+.comment-bubble-2::before {
+    border-bottom-color: #e0f2f8;
+    border-left-color: #e0f2f8;
+}
+
+.comment-bubble-3::before {
+    border-bottom-color: #c2e6f1;
+    border-left-color: #c2e6f1;
+}
+
+.comment-bubble-4::before {
+    border-bottom-color: #a3d9ea;
+    border-left-color: #a3d9ea;
+}
+
+.comment-bubble-5::before {
+    border-bottom-color: #85cde3;
+    border-left-color: #85cde3;
+}
+
+/* Artist name styling */
+.comment-bubble a {
+    display: block;
+    margin-bottom: 5px; /* Space between artist name and comment text */
+    font-weight: bold;
+}
+
+/* Timestamp styling */
+.comment-timestamp {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 0.8em; /* Smaller font size for the timestamp */
+    color: #555; /* Slightly lighter color for the timestamp */
+    white-space: nowrap; /* Prevents the timestamp from wrapping */
+}
+
+/* Ensures the content doesn't overflow */
+.comment-content {
+    overflow-wrap: break-word; /* Breaks long words and wraps text */
+}
+
+/* Hyperlink color */
+.comment a {
+    color: black; /* Change the color to black */
+    text-decoration: none; /* Optional: remove underline */
+}
+
+.comment a:hover {
+    text-decoration: underline; /* Optional: add underline on hover */
+}
+
+/* Ensure the bubbles are vertically stacked */
+.comment-wrapper {
+    display: block;
+    width: 100%;
+}
+
+/* Delete link styling */
+.delete-link {
+    position: absolute;
+    bottom: 5px; /* Position it at the bottom of the bubble */
+    right: 10px; /* Position it near the right edge of the bubble */
+    font-size: 0.6em; /* Slightly smaller text */
+    color: #ff4d4d; /* Color for the delete link */
+    text-decoration: none; /* Remove underline */
+}
+
+.delete-link:hover {
+    text-decoration: underline; /* Underline on hover */
+}

@@ -310,6 +310,32 @@ def post_comment():
     
     return redirect(f"/listen/{song_id}")
 
+@app.route('/deletecomment/<int:comment_id>', methods=['GET'])
+def delete_comment(comment_id):
+    if 'user_id' not in session:
+        flash('You need to log in to delete comments!', 'error')
+        return redirect("/")
+
+    user_id = session['user_id']
+
+    comment = users.comment_info(comment_id)
+
+    if comment == -1:
+        flash('Comment not found.', 'error')
+        return redirect(request.referrer or "/")
+
+    comment_user_id = comment[0]
+    if users.isAdmin(user_id) == False:
+        flash('You do not have permission to delete this comment.', 'error')
+        return redirect(request.referrer or "/")
+
+    if users.isAdmin or session['user_id'] == comment_user_id:
+        users.delete_comment(comment_id)
+
+    flash('Comment deleted successfully.', 'success')
+
+    return redirect(request.referrer or "/")
+
 @app.route("/")
 def index():
     limit = 5

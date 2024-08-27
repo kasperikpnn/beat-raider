@@ -50,12 +50,12 @@ def who_commented(id):
         return user[0]
 
 def comment_info(id):
-    sql = text("SELECT user_id, content, timestamp FROM comments WHERE id=:id")
+    sql = text("SELECT user_id, content, timestamp, id FROM comments WHERE id=:id")
     result = db.session.execute(sql, {"id":id})
     comment = result.fetchone()
     if not comment:
         return -1
-    return [comment[0], comment[1], comment[2], artist(comment[0])] ## user_id, content, timestamp, artist name
+    return [comment[0], comment[1], comment[2], artist(comment[0]), comment[3]] ## user_id, content, timestamp, artist name, comment ID
 
 def get_comments(song_id, limit, offset=0):
     sql = text("SELECT id FROM comments WHERE song_id=:song_id ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
