@@ -310,14 +310,20 @@ h2 {
 
 /* Delete link styling */
 .delete-link {
+    background: none;
+    border: none;
     position: absolute;
     bottom: 5px; /* Position it at the bottom of the bubble */
     right: 10px; /* Position it near the right edge of the bubble */
     font-size: 0.6em; /* Slightly smaller text */
     color: #ff4d4d; /* Color for the delete link */
     text-decoration: none; /* Remove underline */
+    padding: 0; /* Remove padding */
+    
 }
 
 .delete-link:hover {
+    background: none;
+    border: none;
     text-decoration: underline; /* Underline on hover */
 }

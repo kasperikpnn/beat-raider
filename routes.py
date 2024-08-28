@@ -90,7 +90,7 @@ def edit(song_id):
     if request.method == "GET":
         song_info = SM.getinfo(song_id)
         if song_info != -1:
-            if song_info[8] == session["user_id"] or session.get("is_admin"):
+            if song_info[8] == session.get("user_id") or session.get("is_admin"):
                 next_url = request.referrer or url_for('profile', user_id=session['user_id'])
                 return render_template("edit.html", song = song_info, next_url = next_url)
             else:
@@ -206,8 +206,10 @@ def search():
 
 @app.route('/load_more_songs', methods=['POST'])
 def load_more_songs():
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+    csrf_token = session.get("csrf_token")
+    if csrf_token:
+        if session("csrf_token") != request.form.get("csrf_token"):
+            abort(403)
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
     next_url = request.form.get('next_url')
@@ -310,8 +312,10 @@ def post_comment():
     
     return redirect(f"/listen/{song_id}")
 
-@app.route('/deletecomment/<int:comment_id>', methods=['GET'])
+@app.route('/deletecomment/<int:comment_id>', methods=['POST'])
 def delete_comment(comment_id):
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     if 'user_id' not in session:
         flash('You need to log in to delete comments!', 'error')
         return redirect("/")
@@ -363,6 +367,7 @@ def logout():
     del session["user_id"]
     del session["csrf_token"]
     del session["logged_in"]
+    session["is_admin"] = False
     return redirect("/")
 
 @app.route("/profile/<user_id>", methods=["get"])

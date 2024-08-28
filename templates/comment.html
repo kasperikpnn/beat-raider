@@ -6,7 +6,10 @@
         </div>
         <time class="comment-timestamp" datetime="{{ comment_timestamp }}">{{ comment_timestamp }}</time>
         {% if session.user_id == comment_user_id or session.is_admin %}
-            <a href="/deletecomment/{{ comment_id }}" class="delete-link">Delete</a>
+            <form action="/deletecomment/{{ comment_id }}" method="post" class="delete-form">
+                <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                <button type="submit" class="delete-link">Delete</button>
+            </form>
         {% endif %}
     </div>
 </div>

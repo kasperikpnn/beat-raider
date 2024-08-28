@@ -64,6 +64,7 @@
     </form>
     {% endif %}
 
+    {% if session.user_name %}
     <div class="postComment">
         <form action="/postcomment" method="POST">
             <input type="hidden" name="song_id" value="{{ song }}">
@@ -73,6 +74,7 @@
             <button type="submit" class="submit">Send</button>
         </form>
     </div>
+    {% endif %}
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             // Select all 'time' elements
