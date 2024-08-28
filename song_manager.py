@@ -30,7 +30,7 @@ class SongManager:
         os.remove(temp_path)
         return duration
 
-    def save_song(self, user_id, song_data, name, genre, duration, timestamp):
+    def save_song(self, user_id, song_data, name, genre, duration, timestamp, description="No description set"):
         duration = str(timedelta(seconds=duration))
         id = idgen.generate_id()
         filename = f"{id}.mp3"
@@ -39,8 +39,8 @@ class SongManager:
             song_data = song_data.encode()
         with open(file_path, 'wb') as f:
             f.write(song_data)
-        sql = text("INSERT INTO songs (id, user_id, name, genre, duration, timestamp) VALUES (:id, :user_id, :name, :genre, :duration, :timestamp)")
-        db.session.execute(sql, {"id":id, "user_id":user_id, "name":name, "genre":genre, "duration":duration, "timestamp":timestamp})
+        sql = text("INSERT INTO songs (id, user_id, name, genre, duration, description, timestamp) VALUES (:id, :user_id, :name, :genre, :duration, :description, :timestamp)")
+        db.session.execute(sql, {"id":id, "user_id":user_id, "name":name, "genre":genre, "duration":duration, "description":description, "timestamp":timestamp})
         db.session.commit()
         return True
 
@@ -93,7 +93,7 @@ class SongManager:
         print("Song found") ## Debugging
         description = song[8].replace('\n', '<br>') if song[8] is not None else ""
         description = Markup(description)
-        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0], song[1], song[8]]
+        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0], song[1], description]
         ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID, user ID, description
 
     def update_song_info(self, song_id, delete_confirm, new_songname, new_desc, new_genre):

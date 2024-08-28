@@ -14,9 +14,11 @@
     </script>
 </head>
 <body>
-    <form action="/submit" method="post" enctype="multipart/form-data">
+    <form action="/submit" method="post" enctype="multipart/form-data" class="vertical-form">
         <p>Song name:<br>
             <input type="text" name="song_name" required></p>
+        <p>Song description:<br>
+            <textarea id="desc" name="desc" rows="4" cols="50"></textarea></p>
         <p>Genre:<br>
             <select name="genre" onchange="toggleCustomGenre(this)" required>
                 <option value="" disabled selected>Select a genre</option>

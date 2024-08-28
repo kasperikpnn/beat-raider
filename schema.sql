@@ -32,12 +32,6 @@ CREATE TABLE playlist_songs (
     PRIMARY KEY (playlist_id, song_id)
 );
 
-CREATE TABLE liked_songs (
-    user_id INT REFERENCES users(id),
-    song_id TEXT REFERENCES songs(id),
-    PRIMARY KEY (user_id, song_id)
-);
-
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     user_id TEXT,

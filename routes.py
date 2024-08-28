@@ -208,7 +208,7 @@ def search():
 def load_more_songs():
     csrf_token = session.get("csrf_token")
     if csrf_token:
-        if session("csrf_token") != request.form.get("csrf_token"):
+        if csrf_token != request.form.get("csrf_token"):
             abort(403)
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
@@ -239,8 +239,10 @@ def load_more_songs():
 
 @app.route('/load_more_user_songs', methods=['POST'])
 def load_more_user_songs():
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+    csrf_token = session.get("csrf_token")
+    if csrf_token:
+        if csrf_token != request.form.get("csrf_token"):
+            abort(403)
     limit = 5  # Number of songs to load each time
     offset = request.form.get('offset', default=0, type=int)
     next_url = request.form.get('next_url')
@@ -298,8 +300,10 @@ def post_comment():
     song_id = request.form.get("song_id")
     content = request.form.get("content")
     
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+    csrf_token = session.get("csrf_token")
+    if csrf_token:
+        if csrf_token != request.form.get("csrf_token"):
+            abort(403)
     if not user_id:
         flash('You need to be logged in to post a comment.', 'error')
         return redirect(f"/listen/{song_id}")
@@ -314,8 +318,10 @@ def post_comment():
 
 @app.route('/deletecomment/<int:comment_id>', methods=['POST'])
 def delete_comment(comment_id):
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+    csrf_token = session.get("csrf_token")
+    if csrf_token:
+        if csrf_token != request.form.get("csrf_token"):
+            abort(403)
     if 'user_id' not in session:
         flash('You need to log in to delete comments!', 'error')
         return redirect("/")
@@ -445,8 +451,10 @@ def upload():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    if session["csrf_token"] != request.form["csrf_token"]:
-        abort(403)
+    csrf_token = session.get("csrf_token")
+    if csrf_token:
+        if csrf_token != request.form.get("csrf_token"):
+            abort(403)
     song = request.files['song']
     song_data = song.read()  # Read the song data into memory
     try:
@@ -460,8 +468,11 @@ def submit():
     if genre == "Custom":
         genre = request.form['custom_genre']
     timestamp = datetime.now()
+    description = request.form['desc']
+    if not description:
+        description = "No description set"
     try:
-        SM.save_song(session["user_id"], song_data, name, genre, duration, timestamp)
+        SM.save_song(session["user_id"], song_data, name, genre, duration, timestamp, description)
         flash('Successfully uploaded the song!!', 'success')
     except Exception as e:
         flash(f'Failed to upload the song: {str(e)}', 'error')
