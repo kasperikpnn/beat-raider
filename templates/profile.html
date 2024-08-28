@@ -13,7 +13,6 @@
 {% if session.user_id == p_id or session.is_admin %}
 <a href="/edit_profile/{{ session.user_id }}">Edit profile page here</a>
 {% endif %}
-<p>User description:</p>
 <p>{{ p_desc }}</p>
 
 
@@ -57,25 +56,9 @@
 </form>
 {% endif %}
 
-<h2>Playlists:</h2>
-{% if session.user_id == p_id %}
-<button id="createPlaylistBtn">Create New Playlist</button>
-
-<div id="createPlaylistModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Create New Playlist</h2>
-        <form id="createPlaylistForm" method="post" action="/create_playlist">
-            <label for="playlistName">Playlist Name:</label>
-            <input type="text" id="playlistName" name="playlistName" required>
-            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
-            <button type="submit">Create Playlist</button>
-        </form>
-    </div>
-</div>
-{% endif %}
-
 <div id="playlist-container">
+    
+    <h3>Playlists:</h3>
     {% for playlist in artist_playlists %}
         {% set playlist_id = playlist[0] %}
         {% set playlist_artist = playlist[1] %}
@@ -86,7 +69,24 @@
 
         {% include 'playlist_card.html' %}
     {% endfor %}
+    {% if session.user_id == p_id %}
+    <button id="createPlaylistBtn" class="playlist-button">Create New Playlist</button>
+    
+    <div id="createPlaylistModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create New Playlist</h2>
+            <form id="createPlaylistForm" class="vertical-form" method="post" action="/create_playlist">
+                <label for="playlistName">Playlist Name:</label>
+                <input type="text" id="playlistName" name="playlistName" required>
+                <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                <button type="submit">Create Playlist</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
 
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user

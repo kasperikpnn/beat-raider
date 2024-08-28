@@ -178,6 +178,8 @@ def listen(song_id):
 def search():
     name = request.args.get('name', '')
     genre = request.args.get('genre', '')
+    if genre == "Custom":
+        genre = request.args.get('custom_genre')
     time = request.args.get('time', 'all_time')
     limit = 5  # Number of songs to display per page
     offset = request.args.get('offset', default=0, type=int)

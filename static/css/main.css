@@ -3,6 +3,8 @@ body {
     max-width: 45em;
     font-family: 'Helvetica', 'Arial', sans-serif;
     background-color: #73a5bc;
+    padding-bottom: 20px;
+    padding-top: 20px;
 }
 
 .header {
@@ -21,27 +23,7 @@ body {
     text-align: center;
 }
 
-#songs-container {
-    display: flex;
-    flex-direction: column; /* Stack the song boxes vertically */
-    align-items: center; /* Center the song boxes */
-    gap: 20px; /* Space between each song box */
-    width: 100%; /* Make sure the container is full width */
-    padding: 0; /* Remove any padding to prevent extra space */
-    background: none; /* Ensure no background color */
-    box-shadow: none; /* Remove any box-shadow from the container */
-}
 
-#playlist-container {
-    display: flex;
-    flex-direction: column; /* Stack the song boxes vertically */
-    align-items: center; /* Center the song boxes */
-    gap: 20px; /* Space between each song box */
-    width: 100%; /* Make sure the container is full width */
-    padding: 0; /* Remove any padding to prevent extra space */
-    background: none; /* Ensure no background color */
-    box-shadow: none; /* Remove any box-shadow from the container */
-}
 
 .options {
     position: fixed;
@@ -54,41 +36,6 @@ body {
     background: none; /* No background color */
     box-shadow: none; /* Remove any box-shadow from the container */
     text-align: right; /* Ensure text is aligned to the right */
-}
-
-.login {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: column; /* Stack the options vertically */
-    gap: 10px; /* Space between each option */
-    width: auto; /* Set width to auto to avoid overflowing */
-    background: none; /* No background color */
-    box-shadow: none; /* Remove any box-shadow from the container */
-    text-align: right; /* Ensure text is aligned to the right */
-}
-
-.song {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Make the song boxes take full width within the container */
-    max-width: 600px; /* Limit the maximum width of the song boxes */
-    box-sizing: border-box; /* Ensure padding doesn't affect the box width */
-    margin: 0 auto; /* Ensure it's centered */
-}
-
-.playlist {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Make the song boxes take full width within the container */
-    max-width: 600px; /* Limit the maximum width of the song boxes */
-    box-sizing: border-box; /* Ensure padding doesn't affect the box width */
-    margin: 0 auto; /* Ensure it's centered */
 }
 
 table {
@@ -125,24 +72,6 @@ td, th {
     background-color: #f44336;
   }
 
-.login-button {
-    background: none; /* Remove default button background */
-    border: none; /* Remove default button border */
-    color: #007bff; /* Text color, adjust as needed */
-    font: inherit; /* Inherit font styles from parent */
-    cursor: pointer; /* Show pointer cursor on hover */
-    padding: 0; /* Remove default padding */
-    text-decoration: underline; /* Optional: underline text to indicate it's clickable */
-}
-
-.login-button:hover {
-    color: #0056b3; /* Change color on hover, adjust as needed */
-}
-
-.login-button:focus {
-    outline: none; /* Remove default focus outline */
-}
-
 /* Ensure the form is aligned to the left and adjust padding */
 .vertical-form {
     display: flex;
@@ -155,6 +84,10 @@ td, th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
     margin: 0;
     align-self: flex-start; /* Align form to the start of the container */
+}
+
+.search-bar {
+    padding: 10px;
 }
 
 /* Align form elements and labels */
@@ -183,6 +116,13 @@ td, th {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1em;
+}
+
+.vertical-form small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #555; /* Slightly lighter text color */
 }
 
 .vertical-form input[type="submit"]:hover {
@@ -326,4 +266,77 @@ h2 {
     background: none;
     border: none;
     text-decoration: underline; /* Underline on hover */
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.login-form label {
+    margin-bottom: 5px; /* Add space between label and input */
+    font-weight: normal; /* Remove bold from labels */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Link-like button styling */
+.login-link, .register-link, .playlist-button, .upload-link, .logout-link, .profile-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    font: inherit;
+    cursor: pointer;
+    padding: 0; /* Remove padding */
+    text-decoration: underline; /* Add underline to make it look like a link */
+    display: inline-block;
+}
+
+.login-link:hover, .register-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Register link specific styling */
+.register-group {
+    margin-top: 10px;
+    text-align: left;
+}
+
+#songs-container, #playlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.song, .playlist {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    margin: 0 auto;
 }

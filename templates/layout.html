@@ -11,41 +11,59 @@
     <script src="{{ url_for('static', filename='js/audio_player.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
     <script src="{{ url_for('static', filename='js/popup.js') }}" defer></script>
+    <script>
+        function toggleCustomGenre(selectElement) {
+            var customGenreSearch = document.getElementById('customGenreSearch');
+            if (selectElement.value === 'Custom') {
+                customGenreSearch.style.display = 'block';
+            } else {
+                customGenreSearch.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
     
     <div class="header">
-        ((d[-_-]b))
+        d[-_-]b
         <div class="headertitle">
              <a href="/"><h1>&lt;(^^&lt;)   BeatRaider   (&gt;^^)&gt;</h1></a> 
         </div>
-        ((d[-_-]b))
+        d[-_-]b
     </div>
 
     <div class="options">
         {% if session.user_name %}
             <p>You've logged in as {{ session.user_name }} {% if session.is_admin %} (admin) {% endif %}</p>
-            <a href="/upload">Upload a song</a>
-            <a href="/profile/{{ session.user_id }}">Your profile page</a>
-            <a href="/logout">Log out</a>
+            <a href="/upload" class="upload-link">Upload a song</a>
+            <a href="/profile/{{ session.user_id }}" class="profile-link">Your profile page</a>
+            <a href="/logout" class="logout-link">Log out</a>
         {% else %}
             <div class="login">
-            <form action="/login" method="POST">
-            <p>Username:<br>
-            <input type="text" name="username"></p>
-            <p>Password:<br>
-            <input type="password" name="password"></p>
-            <p>
-            <button type="submit" class="login-button">Log in</button>
-            </form>
+                <form action="/login" method="POST" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="login-link">Log in</button>
+                    </div>
+                </form>
+                <div class="register-group">
+                    <a href="/register" class="register-link">Register</a>
+                </div>
             </div>
         {% endif %}
     </div>
 
-    <form action="{{ url_for('search') }}" method="get">
+    <form action="{{ url_for('search') }}" method="get" class="search-bar">
         <input type="text" name="name" placeholder="Search..." value="{{ request.args.get('name', '') }}">
         
-        <select name="genre">
+        <select name="genre" onchange="toggleCustomGenre(this)">
             <option value="">All</option>
             <option value="Pop">Pop</option>
             <option value="Rock">Rock</option>
@@ -56,6 +74,11 @@
             <option value="Country">Country</option>
             <option value="Custom">Custom Genre</option>
         </select>
+
+        <div id="customGenreSearch" style="display: none;">
+            <p>Custom Genre:<br>
+                <input type="text" name="custom_genre"></p>
+        </div>
         
         <select name="time">
             <option value="all_time">All-time</option>
