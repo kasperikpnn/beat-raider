@@ -25,20 +25,20 @@ psql < schema.sql
 flask run
 ```
 
-## Current status
-
-Didn't quite meet my goals for this deadline, as many basic features I wanted to implement are still not there, such as searching for songs or improving the security.
+## Final status
 
 The user can:
 - log in and out, and create a new account
 - when registering, they can set a separate "artist name" from their username
 - upload music formatted as .mp3 on the platform (saved in the /uploads folder of the app)
-- check out their profile page, displaying all of the music they have uploaded
+- check out their profile page, displaying all of the music they have uploaded and playlists they have created
 - edit their artist name, change their password, set their profile description
 - create playlists
 - add songs to a playlist
-- edit their songs: includes editing the genre, the song name, the song description (work-in-progress)
+- edit their songs: includes editing the genre, the song name, the song description
 - delete their songs
+- comment on songs
+- can be admin, being able to edit and delete all songs, comments, playlists, profile descriptions etc. only restricted to the user "neotride", password is 1234
 
 The songs:
 - have a set title and genre by the artist
@@ -48,38 +48,22 @@ The songs:
 - have a timestamp for when they were uploaded, which is shown in a "humanized" way on the website (ex. "2 minutes ago")
 
 Playlists:
-- work in progress!
 - can be created: they have a name and an upload date
 - you can add songs in them
 - amount of songs is counted
-- can't be listened to, or deleted yet
+- functions as a "selection of songs": had no time to implement listening to all of the playlist at once, shuffle, etc
+- can't actually remove songs from playlists, didn't have time to implement this either
 
 UI:
-
-- implemented layout.html which is extended to almost every template. displays the text BeatRaider which just simply takes you to front page, for easier navigation
-
-To-do:
-
-Users:
-- commenting and liking
-- adding admin users: ability to delete all songs, edit all profiles and song information
-- possibly basic profile pictures? choose from a set of ASCII pictures
-- ability to delete playlists
-
-Songs:
-- will have descriptions
-- implement likes and (possibly depending on time) play count on songs
-
-Front page:
-- will have songs on it, probably just the most recent songs
-- will have a search bar!!! search for songs with a specific name, genre, songs that were uploaded this week/today...
-
+- implemented layout.html which is extended to almost every template
+- implemented CSS. Almost all buttons are text on purpose, for the "early Internet" aesthetic
+  
 Security:
-- passwords saved in plain text currently. need to save them in hash
-- browser cache may cause some issues security-wise later (I've been logged in as users that shouldn't exist anymore)
+- only the hash values of passwords are saved
+- accounts for CSRF vulnerability
 
-UI:
-- will be as much in text as possible, no images, or even buttons! this is by design, and will probably make things harder for me. (it was already hard making the seek bar in text) why? i just like the idea of it. will include ASCII art possibly to make it look better
+## Notes for testing
 
-If there's extra time:
-- implement BPM for songs (not automatic, will be filled by the artist). can be used for searching songs with a specific BPM
+- the admin username is ``neotride`` and password is ``1234``
+- other users have been created for testing, such as ``anamanaguchi``, ``kevinmcleod``, and ``porterrobinson``. All of their passwords are ``1234``
+- songs have been added on the web site for search/pagination/etc testing purposes. All of the songs used are fair use, and were officially available for free download. (Songs under Neotride are songs I have personally made)
