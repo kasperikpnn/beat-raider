@@ -1,37 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
+
 <h2>Edit your profile</h2>
 
-You can leave any fields empty, if you don't wish to edit them.
+<p>You can leave any fields empty if you don't wish to edit them.</p>
 
 <form action="/edit_profile/{{ session.user_id }}" method="post" class="vertical-form">
-    <div>
+    <div class="form-group">
         <label>Current artist name: {{ p_artistname }}</label>
         <label for="artist_name">New artist name:</label>
         <input id="artist_name" type="text" name="artist_name">
     </div>
 
-    <div>
+    <div class="form-group">
         <label>Current description: {{ p_desc }}</label>
         <label for="desc">New description:</label>
         <textarea id="desc" name="desc" rows="4" cols="50"></textarea>
     </div>
 
-    <div>
+    <div class="form-group">
         <label>If you wish to change your password, fill out all of the fields below:</label>
     </div>
 
-    <div>
+    <div class="form-group">
         <label for="old_password">Current password:</label>
         <input id="old_password" type="password" name="old_password">
     </div>
 
-    <div>
+    <div class="form-group">
         <label for="new_password">New password:</label>
         <input id="new_password" type="password" name="new_password">
     </div>
 
-    <div>
+    <div class="form-group">
         <label for="new_password2">New password again:</label>
         <input id="new_password2" type="password" name="new_password2">
     </div>
@@ -39,8 +40,9 @@ You can leave any fields empty, if you don't wish to edit them.
     <input type="hidden" name="next" value="{{ next_url }}">
     <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
 
-    <div>
-        <input type="submit" value="Edit profile">
+    <div class="form-group">
+        <input type="submit" class="submit-link" value="Edit profile">
     </div>
 </form>
+
 {% endblock %}

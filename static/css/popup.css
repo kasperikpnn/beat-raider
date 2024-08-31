@@ -35,14 +35,14 @@
 }
 
 .modal-content button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    margin-top: 10px;
+    background: none;
     border: none;
+    color: #007bff;
+    font: inherit;
     cursor: pointer;
-    width: 100%;
-    font-size: 16px;
+    padding: 0; /* Remove padding */
+    text-decoration: underline; /* Add underline to make it look like a link */
+    display: inline-block;
 }
 
 .modal-content button:hover {

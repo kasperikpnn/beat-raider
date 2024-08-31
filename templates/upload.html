@@ -13,39 +13,49 @@
         }
     </script>
 </head>
-<body>
-    <form action="/submit" method="post" enctype="multipart/form-data" class="vertical-form">
-        <p>Song name:<br>
-            <input type="text" name="song_name" required></p>
-        <p>Song description:<br>
-            <textarea id="desc" name="desc" rows="4" cols="50"></textarea></p>
-        <p>Genre:<br>
-            <select name="genre" onchange="toggleCustomGenre(this)" required>
-                <option value="" disabled selected>Select a genre</option>
-                <option value="Pop">Pop</option>
-                <option value="Rock">Rock</option>
-                <option value="Hip-Hop">Hip-Hop</option>
-                <option value="Jazz">Jazz</option>
-                <option value="Classical">Classical</option>
-                <option value="Electronic">Electronic</option>
-                <option value="Country">Country</option>
-                <option value="Custom">Custom Genre</option>
-            </select>
-        </p>
-        <div id="customGenreDiv" style="display: none;">
-            <p>Custom Genre:<br>
-                <input type="text" name="custom_genre"></p>
-        </div>
-        <div>
-            <label for="song_uploads">Choose a song to upload (MP3)</label>
-            <input type="file" name="song" accept=".MP3" required />
-        </div>
-        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
-        <div>
-            <button type="submit">Submit</button>
-        </div>
-    </form>
-</body>
-</html>
+
+<h2>Uploading a song ₊˚⊹♡ ᓚ₍ ^. .^₎</h2>
+<form action="/submit" method="post" enctype="multipart/form-data" class="vertical-form">
+    <div class="form-group">
+        <label for="song_name">Song name:</label>
+        <input id="song_name" type="text" name="song_name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="desc">Song description:</label>
+        <textarea id="desc" name="desc" rows="4" cols="50"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="genre">Genre:</label>
+        <select id="genre" name="genre" onchange="toggleCustomGenre(this)" required>
+            <option value="" disabled selected>Select a genre</option>
+            <option value="Pop">Pop</option>
+            <option value="Rock">Rock</option>
+            <option value="Hip-Hop">Hip-Hop</option>
+            <option value="Jazz">Jazz</option>
+            <option value="Classical">Classical</option>
+            <option value="Electronic">Electronic</option>
+            <option value="Country">Country</option>
+            <option value="Custom">Custom Genre</option>
+        </select>
+    </div>
+
+    <div id="customGenreDiv" class="form-group" style="display: none;">
+        <label for="custom_genre">Custom Genre:</label>
+        <input id="custom_genre" type="text" name="custom_genre">
+    </div>
+
+    <div class="form-group">
+        <label for="song_uploads">Choose a song to upload (MP3):</label>
+        <input id="song_uploads" type="file" name="song" accept=".MP3" required>
+    </div>
+
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+
+    <div class="form-group">
+        <button type="submit" class="submit-link">Submit</button>
+    </div>
+</form>
 
 {% endblock %}

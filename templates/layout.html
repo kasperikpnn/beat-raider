@@ -23,102 +23,77 @@
     </script>
 </head>
 <body>
-    
-    <div class="header">
-        d[-_-]b
-        <div class="headertitle">
-             <a href="/"><h1>&lt;(^^&lt;)   BeatRaider   (&gt;^^)&gt;</h1></a> 
-        </div>
-        d[-_-]b
-    </div>
-
-    <div class="options">
-        {% if session.user_name %}
-            <p>You've logged in as {{ session.user_name }} {% if session.is_admin %} (admin) {% endif %}</p>
-            <a href="/upload" class="upload-link">Upload a song</a>
-            <a href="/profile/{{ session.user_id }}" class="profile-link">Your profile page</a>
-            <a href="/logout" class="logout-link">Log out</a>
-        {% else %}
-            <div class="login">
-                <form action="/login" method="POST" class="login-form">
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" name="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" name="password">
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="login-link">Log in</button>
-                    </div>
-                </form>
-                <div class="register-group">
-                    <a href="/register" class="register-link">Register</a>
-                </div>
+    <div class="page-wrapper">
+        <div class="header">
+            d[-_-]b
+            <div class="headertitle">
+                <a href="/"><h1>&lt;(^^&lt;)   BeatRaider   (&gt;^^)&gt;</h1></a>
             </div>
-        {% endif %}
-    </div>
-
-    <form action="{{ url_for('search') }}" method="get" class="search-bar">
-        <input type="text" name="name" placeholder="Search..." value="{{ request.args.get('name', '') }}">
-        
-        <select name="genre" onchange="toggleCustomGenre(this)">
-            <option value="">All</option>
-            <option value="Pop">Pop</option>
-            <option value="Rock">Rock</option>
-            <option value="Hip-Hop">Hip-Hop</option>
-            <option value="Jazz">Jazz</option>
-            <option value="Classical">Classical</option>
-            <option value="Electronic">Electronic</option>
-            <option value="Country">Country</option>
-            <option value="Custom">Custom Genre</option>
-        </select>
-
-        <div id="customGenreSearch" style="display: none;">
-            <p>Custom Genre:<br>
-                <input type="text" name="custom_genre"></p>
+            d[-_-]b
         </div>
-        
-        <select name="time">
-            <option value="all_time">All-time</option>
-            <option value="today">Today</option>
-            <option value="past_week">Past week</option>
-            <option value="past_month">Past month</option>
-            <option value="past_year">Past year</option>
-        </select>
-        
-        <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
-    
-    <hr>
-    {% include 'flash.html' %}
-    {% block content %}{% endblock %}
-</body>
 
-<style>
-    form {
-        display: flex;
-        align-items: center;
-    }
-    input[type="text"] {
-        padding: 5px;
-        margin-right: 10px;
-        flex-grow: 1;
-    }
-    select {
-        padding: 5px;
-        margin-right: 10px;
-    }
-    button {
-        padding: 5px 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #0056b3;
-    }
-</style>
+        <div class="options">
+            {% if session.user_name %}
+                <p>You've logged in as {{ session.user_name }} {% if session.is_admin %} (admin) {% endif %}</p>
+                <a href="/upload" class="upload-link">Upload a song</a>
+                <a href="/profile/{{ session.user_id }}" class="profile-link">Your profile page</a>
+                <a href="/logout" class="logout-link">Log out</a>
+            {% else %}
+                <div class="login">
+                    <form action="/login" method="POST" class="login-form">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="login-link">Log in</button>
+                        </div>
+                    </form>
+                    <div class="register-group">
+                        <a href="/register" class="register-link">Register</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <form action="{{ url_for('search') }}" method="get" class="search-bar">
+            <input type="text" name="name" placeholder="Search..." value="{{ request.args.get('name', '') }}">
+            
+            <select name="genre" onchange="toggleCustomGenre(this)">
+                <option value="">All</option>
+                <option value="Pop">Pop</option>
+                <option value="Rock">Rock</option>
+                <option value="Hip-Hop">Hip-Hop</option>
+                <option value="Jazz">Jazz</option>
+                <option value="Classical">Classical</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Country">Country</option>
+                <option value="Custom">Custom Genre</option>
+            </select>
+
+            <div id="customGenreSearch" style="display: none;">
+                <p>Custom Genre:<br>
+                    <input type="text" name="custom_genre"></p>
+            </div>
+            
+            <select name="time">
+                <option value="all_time">All-time</option>
+                <option value="today">Today</option>
+                <option value="past_week">Past week</option>
+                <option value="past_month">Past month</option>
+                <option value="past_year">Past year</option>
+            </select>
+            
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        
+        <hr>
+        {% include 'flash.html' %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
 </html>

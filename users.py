@@ -15,7 +15,7 @@ def login(name, password):
     else:
         hash_value = user.password
         if check_password_hash(hash_value, password):
-                session["user_id"] = user[1]
+                session["user_id"] = str(user[1])
                 session["user_name"] = name
                 session["csrf_token"] = os.urandom(16).hex()
                 session["logged_in"] = True
@@ -55,7 +55,7 @@ def comment_info(id):
     comment = result.fetchone()
     if not comment:
         return -1
-    return [comment[0], comment[1], comment[2], artist(comment[0]), comment[3]] ## user_id, content, timestamp, artist name, comment ID
+    return [str(comment[0]), comment[1], comment[2], artist(comment[0]), comment[3]] ## user_id, content, timestamp, artist name, comment ID
 
 def get_comments(song_id, limit, offset=0):
     sql = text("SELECT id FROM comments WHERE song_id=:song_id ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")

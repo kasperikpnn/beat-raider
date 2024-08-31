@@ -1,9 +1,10 @@
 <div class="song">
     <p><a href="/listen/{{ song_id }}">{{ song_name }}</a></p>
-    <p>By: {{ song_artist }}</p>
+    <p>By: <a href="/profile/{{ song_user_id }}">{{ song_artist }}</a></p>
     <p>Genre: {{ song_genre }}</p>
     <p id="duration-display-{{ song_id }}">Duration: <span class="duration">{{ song_duration }}</span></p>
     <p>Uploaded: <time id="timeago" datetime="{{ song_timestamp }}">{{ song_timestamp }}</time></p>
+    <p>Comments: {{ song_comments }}</p>
 
     <audio id="audio-{{ song_id }}" data-index="{{ song_id }}" ontimeupdate="updateSeekBar(this)">
         <source src="{{ url_for('send_upload', filename=song_id) }}" type="audio/mpeg">

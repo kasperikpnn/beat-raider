@@ -7,45 +7,68 @@
     <title>{{ song_artist}} - {{ song_name }}</title>
 </head>
 <body>
+<div id="profile-container">
+    <h1> {{ p_artistname }}</h1>
 
-<h1> {{ p_artistname }}</h1>
-
-{% if session.user_id == p_id or session.is_admin %}
-<a href="/edit_profile/{{ session.user_id }}">Edit profile page here</a>
-{% endif %}
-<p>{{ p_desc }}</p>
-
-
-<div id="songs-container">
-    <h3>User songs</h3>
-    {% for song in user_songs %}
-            {% set song_id = song[7] %}
-            {% set song_name = song[1] %}
-            {% set song_artist = song[0] %}
-            {% set song_genre = song[2] %}
-            {% set song_timestamp = song[6] %}
-            {% set song_user_id = song[8] %}
-            {% set song_duration = song[3] %}
-            {% include 'song_card.html' %}
-    {% endfor %}
+    {% if session.user_id == p_id or session.is_admin %}
+        <a href="/edit_profile/{{ session.user_id }}" class="profile-edit-link">Edit profile page here</a>
+    {% endif %}
+    <p>{{ p_desc }}</p>
 </div>
-{% if no_more_songs %}
-    <p>No more songs to load.</p> <!-- Display message when no more songs are available -->
-{% endif %}
 
-<!-- Back Button -->
-{% if offset > 0 and total_songs > 0 %}
-<form id="back-form" method="post" action="/load_more_user_songs">
-    <input type="hidden" name="offset" value="{% if offset - limit < 0 %}0{% else %}{{ offset - limit }}{% endif %}">
-    <input type="hidden" name="direction" value="back">
-    <input type="hidden" name="user_id" value="{{ p_id }}">
-    <input type="hidden" name="next_url" value="profile.html">
-    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
-    <button type="submit">Back</button>
-</form>
-{% endif %}
+<div id="main-content-container">
+    <!-- Songs Container -->
+    <div id="songs-container">
+        <h3>User songs:</h3>
+        {% for song in user_songs %}
+                {% set song_id = song[7] %}
+                {% set song_name = song[1] %}
+                {% set song_artist = song[0] %}
+                {% set song_genre = song[2] %}
+                {% set song_timestamp = song[6] %}
+                {% set song_user_id = song[8] %}
+                {% set song_duration = song[3] %}
+                {% set song_comments = song[10] %}
+                {% include 'song_card.html' %}
+        {% endfor %}
+        {% if session.user_id == p_id %}
+        <a href="/upload" class="upload-link">Upload a song</a>
+        {% endif %}
+    </div>
 
-<!-- Load More Button -->
+    <!-- Playlists Container -->
+    <div id="playlist-container">
+        <h3>Playlists:</h3>
+        {% for playlist in artist_playlists %}
+            {% set playlist_id = playlist[0] %}
+            {% set playlist_artist = playlist[1] %}
+            {% set playlist_artist_id = playlist[2] %}
+            {% set playlist_name = playlist[3] %}
+            {% set playlist_songcount = playlist[5] %}
+            {% set playlist_timestamp = playlist[4] %}
+
+            {% include 'playlist_card.html' %}
+        {% endfor %}
+        {% if session.user_id == p_id %}
+        <button id="createPlaylistBtn" class="playlist-button">Create new playlist</button>
+        
+        <div id="createPlaylistModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Create new playlist</h2>
+                <form id="createPlaylistForm" class="vertical-form" method="post" action="/create_playlist">
+                    <label for="playlistName">Playlist Name:</label>
+                    <input type="text" id="playlistName" name="playlistName" required>
+                    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                    <button type="submit">Create Playlist</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Load More Songs Form -->
 {% if offset + limit < total_songs and total_songs > 0 %}
 <form id="load-more-form" method="post" action="/load_more_user_songs">
     <input type="hidden" name="offset" value="{{ offset }}">
@@ -55,38 +78,6 @@
     <button type="submit">Load More Songs</button>
 </form>
 {% endif %}
-
-<div id="playlist-container">
-    
-    <h3>Playlists:</h3>
-    {% for playlist in artist_playlists %}
-        {% set playlist_id = playlist[0] %}
-        {% set playlist_artist = playlist[1] %}
-        {% set playlist_artist_id = playlist[2] %}
-        {% set playlist_name = playlist[3] %}
-        {% set playlist_songcount = playlist[5] %}
-        {% set playlist_timestamp = playlist[4] %}
-
-        {% include 'playlist_card.html' %}
-    {% endfor %}
-    {% if session.user_id == p_id %}
-    <button id="createPlaylistBtn" class="playlist-button">Create New Playlist</button>
-    
-    <div id="createPlaylistModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Create New Playlist</h2>
-            <form id="createPlaylistForm" class="vertical-form" method="post" action="/create_playlist">
-                <label for="playlistName">Playlist Name:</label>
-                <input type="text" id="playlistName" name="playlistName" required>
-                <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
-                <button type="submit">Create Playlist</button>
-            </form>
-        </div>
-    </div>
-    {% endif %}
-</div>
-
 
 <script>
     // Render the "time ago" text only once, no real time updates until the page is reloaded. This is to make the site even lighter for the user
@@ -101,6 +92,4 @@
     });
 </script>
 </body>
-<!--artist name, song name, genre, duration, likes, playcount, timestamp, song ID -->
-
 {% endblock %}

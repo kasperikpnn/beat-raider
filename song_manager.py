@@ -93,8 +93,9 @@ class SongManager:
         print("Song found") ## Debugging
         description = song[8].replace('\n', '<br>') if song[8] is not None else ""
         description = Markup(description)
-        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], song[0], song[1], description]
-        ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID, user ID, description
+        total_comments = users.how_many_comments(song_id)
+        return [users.artist(song[1]), song[2], song[3], song[4], song[5], song[6], song[7], str(song[0]), str(song[1]), description, total_comments]
+        ## artist name, song name, genre, duration, likes, playcount, timestamp, song ID, user ID, description, total comments
 
     def update_song_info(self, song_id, delete_confirm, new_songname, new_desc, new_genre):
         if delete_confirm == "Y":
@@ -162,7 +163,7 @@ class SongManager:
         if not playlist:
             return []
         songCount = self.countSongsOnPlaylist(playlist_id)
-        return [playlist[0], users.artist(playlist[1]), playlist[1], playlist[2], playlist[3], songCount]
+        return [playlist[0], users.artist(playlist[1]), str(playlist[1]), playlist[2], playlist[3], songCount]
         ## playlist id, artist name of the creator of playlist, id of the creator of playlist, name of playlist, timestamp, song count
 
     def delete_song_file(self, filename):

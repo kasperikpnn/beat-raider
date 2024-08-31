@@ -18,6 +18,7 @@
     {% set song_genre = song_genre %}
     {% set song_timestamp = song_timestamp %}
     {% set song_user_id = song_user_id %}
+    {% set song_comments = total_comments %}
     
     {% include 'song_card.html' %}
 
@@ -27,7 +28,7 @@
 
     <h2>Comments:</h2>
 
-    {% for comment in song_comments %}
+    {% for comment in song_comment_contents %}
         {% set comment_user_id = comment[0] %}
         {% set comment_text = comment[1] %}
         {% set comment_timestamp = comment[2] %}

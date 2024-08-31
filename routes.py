@@ -130,7 +130,7 @@ def editplaylist(playlist_id):
     if request.method == "GET":
         playlist_info = SM.getPlaylistInfo(playlist_id)
         if playlist_info:
-            if str(playlist_info[2]) == session["user_id"] or session.get("is_admin"):
+            if str(playlist_info[2]) == str(session["user_id"]) or session.get("is_admin"):
                 next_url = request.referrer or url_for('profile', user_id=session['user_id'])
                 return render_template("editplaylist.html", playlist = playlist_info, next_url = next_url)
             else:
@@ -169,7 +169,7 @@ def listen(song_id):
     total_comments = users.how_many_comments(song_id)
     song_comments = users.get_comments(song_id, limit, offset)
     if song_info != -1:
-        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8], song_description = song_info[9], song_comments = song_comments, total_comments = total_comments, offset = offset, limit = limit)
+        return render_template("song.html", user_playlists = user_playlists, song = song_id, song_artist = song_info[0], song_name = song_info[1], song_genre = song_info[2], song_duration = song_info[3], song_timestamp = song_info[6], song_user_id = song_info[8], song_description = song_info[9], song_comment_contents = song_comments, total_comments = total_comments, offset = offset, limit = limit)
     else:
         flash('Song not found with this ID! Oopsie!', 'error')
         return redirect("/")
@@ -277,7 +277,7 @@ def load_more_user_songs():
                            p_artistname = p_artistname,
                            user_playlists=user_playlists,
                            artist_playlists=artist_playlists,
-                           p_id = int(user_id),
+                           p_id = str(user_id),
                            p_desc = users.desc(user_id),
                            limit=limit)  # Pass limit to template
 
@@ -389,7 +389,7 @@ def profile(user_id):
         if session.get("logged_in") == True:
             user_playlists = SM.get_playlists(session["user_id"])
         artist_playlists = SM.get_playlists(user_id)
-        return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, total_songs = total_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = int(user_id), p_desc = users.desc(user_id), offset=0, limit = limit)
+        return render_template("profile.html", p_artistname = p_artistname, user_songs = user_songs, total_songs = total_songs, user_playlists = user_playlists, artist_playlists = artist_playlists, p_id = str(user_id), p_desc = users.desc(user_id), offset=0, limit = limit)
     else:
         flash('User does not exist!', 'error')
         return redirect("/")

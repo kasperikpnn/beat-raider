@@ -15,27 +15,24 @@
 
 <h2>Edit your song</h2>
 
-<p>You can leave any fields empty, if you don't wish to edit them.</p>
+<p>You can leave any fields empty if you don't wish to edit them.</p>
 
 <form action="/edit/{{ song[7] }}" method="post" class="vertical-form">
-    <div>
-        <label>Current song name: {{ song[1] }}</label><br>
-        <label>New song name:</label><br>
+    <div class="form-group">
+        <label>Current song name: {{ song[1] }}</label>
+        <label>New song name:</label>
         <input type="text" name="song_name">
     </div>
 
-    <div>
-        <label>Current description: {{ song[9] }}</label><br>
-        <label>New description:</label><br>
+    <div class="form-group">
+        <label>Current description:<br><br>{{ song[9] }}</label>
+        <label>New description:</label>
         <textarea id="desc" name="desc" rows="4" cols="50"></textarea>
     </div>
 
-    <div>
+    <div class="form-group">
         <label>Current genre: {{ song[2] }}</label>
-    </div>
-
-    <div>
-        <label>New genre:</label><br>
+        <label>New genre:</label>
         <select name="genre" onchange="toggleCustomGenre(this)">
             <option value="" disabled selected>Select a genre</option>
             <option value="Pop">Pop</option>
@@ -49,21 +46,21 @@
         </select>
     </div>
 
-    <div id="customGenreDiv" style="display: none;">
-        <label>Custom Genre:</label><br>
+    <div id="customGenreDiv" class="form-group" style="display: none;">
+        <label>Custom Genre:</label>
         <input type="text" name="custom_genre">
     </div>
 
-    <div>
-        <label>If you wish to delete this song, type Y in the field below:</label><br>
+    <div class="form-group">
+        <label>If you wish to delete this song, type Y in the field below:</label>
         <input type="text" name="delete_confirm">
     </div>
 
     <input type="hidden" name="next" value="{{ next_url }}">
     <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
 
-    <div>
-        <input type="submit" value="Edit this song">
+    <div class="form-group">
+        <input type="submit" class="submit-link" value="Finish">
     </div>
 </form>
 
